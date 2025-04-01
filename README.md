@@ -1,52 +1,54 @@
-# S3ARS - CDK TypeScript Project
+# MainApp - VPC with Private Subnet and EC2 Instance Connect
 
-This is a CDK project for creating AWS infrastructure with TypeScript.
+このCDKプロジェクトでは、以下のリソースを作成します：
 
-## Project Structure
+1. プライベートサブネットのみを持つ2つのVPC（各VPCに2つのAZ）：
+   - メインVPC：EC2インスタンスを含む
+   - API VPC：将来のAPIリソース用
+2. メインVPCとAPI VPC間のVPCピアリング接続
+3. メインVPC内のプライベートサブネットにEC2インスタンス
+4. EC2インスタンスコネクトエンドポイント（インスタンスへの接続用）
 
-This project uses a monorepo structure with npm workspaces:
+## アーキテクチャ構成図
 
-```
-s3ars/
-├── packages/
-│   └── cdk/           # CDK infrastructure code
-│       ├── bin/       # CDK app entry point
-│       ├── lib/       # CDK stacks and constructs
-│       └── test/      # Tests for CDK code
-└── package.json       # Root package.json with workspace configuration
-```
+![architecture](./architecture.png)
 
-## Useful Commands
-
-* `npm run cdk:build`         Compile TypeScript to JavaScript
-* `npm run cdk:watch`         Watch for changes and compile
-* `npm run cdk:test`          Perform Jest unit tests
-* `npm run cdk:deploy`        Deploy this stack to your default AWS account/region
-* `npm run cdk:deploy:hotswap` Deploy with hotswap
-* `npm run cdk:destroy`       Destroy the deployed stack
-
-## Architecture
-
-This project creates:
-
-1. A VPC with private subnets (2 AZs)
-2. An EC2 instance in a private subnet
-3. An EC2 Instance Connect Endpoint for connecting to the instance
-
-### Connecting to the EC2 Instance
-
-After deployment, you can connect to the EC2 instance using:
+## デプロイ方法
 
 ```bash
-# Get the instance ID from the CDK output
-INSTANCE_ID=<instance-id-from-output>
+# 依存関係のインストール
+npm install
 
-# Connect using EC2 Instance Connect
-aws ec2-instance-connect ssh --instance-id $INSTANCE_ID
+# TypeScriptのコンパイルとデプロイ
+npm run cdk:deploy
 ```
 
-### Architecture Features
+または、ホットスワップデプロイを使用する場合：
 
-- **Security**: EC2 instance is placed in a private subnet with no direct internet access
-- **Connectivity**: EC2 Instance Connect Endpoint allows secure connection without internet or NAT gateways
-- **Cost Efficiency**: No NAT gateway required, reducing costs
+```bash
+npm run cdk:deploy:hotswap
+```
+
+## EC2インスタンスへの接続方法
+
+デプロイ後、以下のコマンドでEC2インスタンスに接続できます：
+
+```bash
+# CDK出力からインスタンスIDとエンドポイントIDを取得
+INSTANCE_ID=<出力から取得したインスタンスID>
+ENDPOINT_ID=<出力から取得したエンドポイントID>
+
+# EC2インスタンスコネクトを使用して接続
+aws ec2-instance-connect ssh \
+    --instance-id $INSTANCE_ID \
+    --eice-options maxTunnelDuration=3600,endpointId=$ENDPOINT_ID \
+    --os-user ec2-user 
+```
+
+## アーキテクチャの特徴
+
+- **セキュリティ**: インターネットからの直接アクセスができないプライベートサブネットにEC2インスタンスを配置
+- **接続性**: EC2インスタンスコネクトエンドポイントを使用して、インターネットゲートウェイやNATゲートウェイなしでもインスタンスに安全に接続可能
+- **VPCピアリング**: メインVPCとAPI VPC間の通信を可能にする
+- **コスト効率**: NATゲートウェイを使用しないため、コストを削減
+- **モジュール性**: コンストラクトを使用して、コードの再利用性と保守性を向上
