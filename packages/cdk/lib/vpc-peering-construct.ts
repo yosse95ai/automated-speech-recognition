@@ -49,6 +49,12 @@ export class VpcPeeringConstruct extends Construct {
         destinationCidrBlock: props.sourceVpc.vpcCidrBlock,
         vpcPeeringConnectionId: this.peeringConnection.ref
       });
+      
+      // Log the route table configuration for verification
+      new cdk.CfnOutput(this, `${props.targetName}RouteTable${index}Config`, {
+        value: `Route table ${routeTable} configured to route ${props.sourceVpc.vpcCidrBlock} traffic to peering connection ${this.peeringConnection.ref}`,
+        description: `Route configuration for ${props.targetName} subnet ${index}`
+      });
     });
 
     // Output the VPC Peering Connection ID
@@ -74,4 +80,6 @@ export class VpcPeeringConstruct extends Construct {
     
     return routeTables;
   }
+  
 }
+

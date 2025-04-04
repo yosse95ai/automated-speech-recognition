@@ -32,12 +32,17 @@ export class Ec2InstanceConstruct extends Construct {
       allowAllOutbound: true,
     });
 
+    cdk.Tags.of(this.securityGroup).add('Name', `s3arc-${props.name}EC2SecurityGroup`);
+
+
     // Create a separate security group for the EC2 Instance Connect Endpoint
     this.eicEndpointSG = new ec2.SecurityGroup(this, `${props.name}EICEndpointSecurityGroup`, {
       vpc: props.vpc,
       description: `Security group for EC2 Instance Connect Endpoint for ${props.name}`,
       allowAllOutbound: true,
     });
+
+    cdk.Tags.of(this.eicEndpointSG).add('Name', `s3arc-${props.name}EICEndpointSecurityGroup`);
 
     // Allow inbound SSH from the EC2 Instance Connect Endpoint to the EC2 instance
     this.securityGroup.addIngressRule(
@@ -65,20 +70,17 @@ export class Ec2InstanceConstruct extends Construct {
       }).subnetIds[0],
       securityGroupIds: [this.eicEndpointSG.securityGroupId],
     });
+    cdk.Tags.of(this.ec2InstanceConnectEndpoint).add('Name', `s3arc-${props.name}EC2InstanceConnectEndpoint`);
 
     // Output the instance ID for reference
     new cdk.CfnOutput(this, `${props.name}InstanceId`, {
+      key: `${props.name}InstanceId`,
       value: this.instance.instanceId,
       description: `The ID of the ${props.name} EC2 instance`,
     });
 
-    // Output the EC2 Instance Connect Endpoint ID
-    new cdk.CfnOutput(this, `${props.name}EC2InstanceConnectEndpointId`, {
-      value: this.ec2InstanceConnectEndpoint.attrId,
-      description: `The ID of the ${props.name} EC2 Instance Connect Endpoint`,
-    });
-
     new cdk.CfnOutput(this, "InstanceConnectCommand", {
+      key: `InstanceConnectCommand`,
       value: `aws ec2-instance-connect ssh --instance-id ${this.instance.instanceId} --eice-options maxTunnelDuration=3600,endpointId=${this.ec2InstanceConnectEndpoint.attrId} --os-user ec2-user `,
       description: `The command to connect to the ${props.name} EC2 instance`
     })

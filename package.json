@@ -18,5 +18,8 @@
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "aws-cdk": "^2.1007.0"
+  }
 }

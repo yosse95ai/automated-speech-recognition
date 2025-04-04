@@ -5,6 +5,7 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 export interface VpcConstructProps {
   cidr: string;
   name: string;
+  maxAzs?: number; // オプションのAZ数パラメータを追加
 }
 
 export class VpcConstruct extends Construct {
@@ -14,10 +15,10 @@ export class VpcConstruct extends Construct {
   constructor(scope: Construct, id: string, props: VpcConstructProps) {
     super(scope, id);
 
-    // Create a VPC with only private subnets in 2 AZs
+    // Create a VPC with only private subnets
     this.vpc = new ec2.Vpc(this, `${props.name}VPC`, {
       ipAddresses: ec2.IpAddresses.cidr(props.cidr),
-      maxAzs: 2,
+      maxAzs: props.maxAzs || 2, // デフォルトは2、指定があればその値を使用
       subnetConfiguration: [
         {
           name: `${props.name}Private`,
