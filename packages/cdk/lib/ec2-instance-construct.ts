@@ -18,10 +18,12 @@ export class Ec2InstanceConstruct extends Construct {
   constructor(scope: Construct, id: string, props: Ec2InstanceConstructProps) {
     super(scope, id);
 
-    // Create a key pair for Windows RDP authentication
+    // Create a key pair for Windows RDP authentication with a unique name
     this.keyPair = new ec2.CfnKeyPair(this, `${props.name}WindowsKeyPair`, {
       keyName: `${props.name}-windows-key-pair`,
     });
+    this.keyPair.applyRemovalPolicy(cdk.RemovalPolicy.DESTROY);
+
 
     // Create an IAM role for EC2 Instance Connect and SSM
     const ec2Role = new iam.Role(this, `${props.name}EC2InstanceConnectRole`, {
@@ -66,7 +68,7 @@ export class Ec2InstanceConstruct extends Construct {
       machineImage: ec2.MachineImage.latestWindows(ec2.WindowsVersion.WINDOWS_SERVER_2022_ENGLISH_FULL_BASE),
       securityGroup: this.securityGroup,
       role: ec2Role,
-      keyName: this.keyPair.keyName,
+      keyName: cdk.Token.asString(this.keyPair.ref),
     });
 
     // Enable EC2 Instance Connect Endpoint in the VPC
@@ -86,10 +88,10 @@ export class Ec2InstanceConstruct extends Construct {
     });
 
     // Output the key pair name
-    new cdk.CfnOutput(this, `${props.name}KeyPairName`, {
-      key: `${props.name}KeyPairName`,
-      value: this.keyPair.keyName,
-      description: `The name of the key pair for ${props.name} Windows instance`,
+    new cdk.CfnOutput(this, `${props.name}GetKeyPair`, {
+      key: `Get${props.name}KeyPairName`,
+      value: `aws ssm get-parameter --name /ec2/keypair/${this.keyPair.getAtt('KeyPairId')} --region ${this.keyPair.stack.region} --with-decryption --query Parameter.Value --output text`,
+      description: `Command to get ${props.name}KeyPairName for Windows instance`,
     });
 
     // Output the command to retrieve the password
