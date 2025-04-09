@@ -89,21 +89,21 @@ export class Ec2InstanceConstruct extends Construct {
 
     // Output the key pair name
     new cdk.CfnOutput(this, `${props.name}GetKeyPair`, {
-      key: `Get${props.name}KeyPairName`,
-      value: `aws ssm get-parameter --name /ec2/keypair/${this.keyPair.getAtt('KeyPairId')} --region ${this.keyPair.stack.region} --with-decryption --query Parameter.Value --output text`,
+      key: `01Get${props.name}KeyPairName`,
+      value: `aws ssm get-parameter --name /ec2/keypair/${this.keyPair.getAtt('KeyPairId')} --region ${this.keyPair.stack.region} --with-decryption --query Parameter.Value --output text > ./${this.keyPair.keyName}.pem`,
       description: `Command to get ${props.name}KeyPairName for Windows instance`,
     });
 
     // Output the command to retrieve the password
     new cdk.CfnOutput(this, `${props.name}GetPasswordCommand`, {
-      key: `${props.name}GetPasswordCommand`,
-      value: `aws ec2 get-password-data --instance-id ${this.instance.instanceId} --priv-launch-key /path/to/downloaded/${this.keyPair.keyName}.pem`,
+      key: `02${props.name}GetPasswordCommand`,
+      value: `aws ec2 get-password-data --instance-id ${this.instance.instanceId} --priv-launch-key ./${this.keyPair.keyName}.pem`,
       description: `Command to get the Windows password (replace /path/to/downloaded/ with your actual path)`,
     });
 
     // Output the command to establish RDP tunnel via EC2 Instance Connect
     new cdk.CfnOutput(this, "RdpTunnelCommand", {
-      key: `RdpTunnelCommand`,
+      key: `03${props.name}RdpTunnelCommand`,
       value: `aws ec2-instance-connect open-tunnel --instance-id ${this.instance.instanceId} --remote-port 3389 --local-port 13389`,
       description: `Command to establish RDP tunnel to the ${props.name} Windows instance (connect to localhost:13389 with your RDP client)`
     });
