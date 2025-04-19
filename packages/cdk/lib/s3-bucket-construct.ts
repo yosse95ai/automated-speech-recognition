@@ -2,10 +2,15 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import { Duration } from 'aws-cdk-lib';
 
 export interface S3BucketConstructProps {
   bucketName: string;
   vpcEndpointId?: string;
+  /**
+   * オブジェクトの有効期間（日数）。デフォルトは1日。
+   */
+  objectExpirationDays?: number;
 }
 
 export class S3BucketConstruct extends Construct {
@@ -14,13 +19,26 @@ export class S3BucketConstruct extends Construct {
   constructor(scope: Construct, id: string, props: S3BucketConstructProps) {
     super(scope, id);
 
-    // Create S3 bucket
+    // デフォルトの有効期間は1日
+    const expirationDays = props.objectExpirationDays ?? 1;
+
+    // Create S3 bucket with lifecycle rule
     this.bucket = new s3.Bucket(this, 'Bucket', {
       bucketName: props.bucketName,
       encryption: s3.BucketEncryption.S3_MANAGED,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       removalPolicy: cdk.RemovalPolicy.DESTROY, // 開発環境用
       autoDeleteObjects: true, // 開発環境用
+      
+      // ライフサイクルルールの追加
+      lifecycleRules: [
+        {
+          id: 'ExpireAfterOneDay',
+          enabled: true,
+          expiration: Duration.days(expirationDays),
+          abortIncompleteMultipartUploadAfter: Duration.days(1),
+        },
+      ],
     });
 
     // If VPC endpoint ID is provided, add bucket policy to allow access via the endpoint

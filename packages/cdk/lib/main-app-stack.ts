@@ -5,6 +5,7 @@ import { Ec2InstanceConstruct } from './ec2-instance-construct';
 import { VpcPeeringConstruct } from './vpc-peering-construct';
 import { S3BucketConstruct } from './s3-bucket-construct';
 import { S3VpcEndpointConstruct } from './s3-vpc-endpoint-construct';
+import { TranscribeVpcEndpointConstruct } from './transcribe-vpc-endpoint-construct';
 import { DnsSecurityGroupConstruct } from './dns-security-group-construct';
 
 export class MainAppStack extends cdk.Stack {
@@ -45,10 +46,17 @@ export class MainAppStack extends cdk.Stack {
       name: 'Api'
     });
     
+    // Create Transcribe VPC Endpoint in API VPC
+    const transcribeEndpoint = new TranscribeVpcEndpointConstruct(this, 'ApiTranscribeVpcEndpoint', {
+      vpc: apiVpc.vpc,
+      name: 'Api'
+    });
+    
     // Create S3 bucket with policy allowing access via VPC endpoint
     new S3BucketConstruct(this, 'S3ArcBucket', {
       bucketName: 's3-arc-bucket',
-      vpcEndpointId: s3Endpoint.endpoint.vpcEndpointId
+      vpcEndpointId: s3Endpoint.endpoint.vpcEndpointId,
+      objectExpirationDays: 1 // 1日後にオブジェクトを自動削除
     });
     
     // Create DNS Security Group in API VPC to allow DNS traffic from OnpremVPC

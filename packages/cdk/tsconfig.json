@@ -24,7 +24,10 @@
       "./node_modules/@types"
     ],
     "outDir": "dist",
-    "rootDir": "."
+    "rootDir": ".",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "types": ["node"]
   },
   "include": [
     "bin/app.ts",

@@ -31,6 +31,13 @@ npm run cdk:deploy
 npm run cdk:deploy:hotswap
 ```
 
+## デプロイ後に必要な手作業
+- S3 VPC EPのPrivate DNSを有効化する
+- Route 53インバウンドエンドポイントをAPI VPCに設定
+- Peeringごとのルートテーブルの設定
+- DHCPオプションセットを作成
+- OnpremVPC のDHCPオプションを作成したものに変更
+
 ## Windows Serverインスタンスへの接続方法
 
 デプロイ後、以下の手順でWindows Serverインスタンスに接続できます：
@@ -73,6 +80,19 @@ aws ec2-instance-connect open-tunnel \
 
 S3バケットには、API VPC内のS3インターフェースVPCエンドポイント経由でのみアクセスできます。
 バケットポリシーにより、指定されたVPCエンドポイントからのアクセスのみが許可されています。
+
+PowerShell を開いて、検証
+```powershell
+nslookup s3.ap-northeast-1.amazonaws.com
+
+# サーバー:  ip-10-1-1-79.ap-northeast-1.compute.internal
+# Address:  10.1.1.79
+
+# 権限のない回答:
+# 名前:    s3.ap-northeast-1.amazonaws.com
+# Addresses:  10.1.1.134
+#           10.1.0.162
+```
 
 ## アーキテクチャの特徴
 

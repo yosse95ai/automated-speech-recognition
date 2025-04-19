@@ -6,8 +6,8 @@
     "cdk:build": "npm -w packages/cdk run build",
     "cdk:watch": "npm -w packages/cdk run watch",
     "cdk:test": "npm -w packages/cdk run test",
-    "cdk:deploy": "cd packages/cdk && npm run build && npm run deploy",
-    "cdk:deploy:hotswap": "cd packages/cdk && npm run build && npm run deploy:hotswap",
+    "cdk:deploy": "cd packages/cdk && npm run deploy",
+    "cdk:deploy:hotswap": "cd packages/cdk && npm run deploy:hotswap",
     "cdk:destroy": "npm -w packages/cdk run destroy",
     "cdk:lint": "npm -w packages/cdk run lint",
     "clean": "rm -rf packages/cdk/dist"
