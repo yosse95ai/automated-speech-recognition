@@ -27,12 +27,6 @@ npm install
 npm run cdk:deploy
 ```
 
-または、ホットスワップデプロイを使用する場合：
-
-```bash
-npm run cdk:deploy:hotswap
-```
-
 ## デプロイ後に必要な手作業
 - S3 VPC EPのPrivate DNSを有効化する
 - Route 53インバウンドエンドポイントをAPI VPCに設定
@@ -46,29 +40,29 @@ npm run cdk:deploy:hotswap
 
 ### 1. キーペアの取得
 
-デプロイ後、キーペアがCDKによって作成されます。AWS Management ConsoleまたはAWS CLIを使用してキーペアをダウンロードします。
+CDK出力に表示されるコマンドを使用してキーペアを取得します：
+
+```bash
+# CDK出力に表示されるコマンドを実行（例）
+aws ssm get-parameter --name /ec2/keypair/<KeyPairId> --region <リージョン> --with-decryption --query Parameter.Value --output text > ./<キーペア名>.pem
+```
 
 ### 2. Windowsパスワードの取得
 
-```bash
-# CDK出力からインスタンスIDを取得
-INSTANCE_ID=<出力から取得したインスタンスID>
+CDK出力に表示されるコマンドを使用してWindowsパスワードを取得します：
 
-# Windowsパスワードを取得
-aws ec2 get-password-data --instance-id $INSTANCE_ID --priv-launch-key /path/to/downloaded/<キーペア名>.pem
+```bash
+# CDK出力に表示されるコマンドを実行（例）
+aws ec2 get-password-data --instance-id <インスタンスID> --priv-launch-key ./<キーペア名>.pem
 ```
 
 ### 3. RDPトンネルの確立
 
-```bash
-# CDK出力からインスタンスIDとエンドポイントIDを取得
-INSTANCE_ID=<出力から取得したインスタンスID>
+CDK出力に表示されるコマンドを使用してRDPトンネルを確立します：
 
-# EC2インスタンスコネクトを使用してRDPトンネルを確立
-aws ec2-instance-connect open-tunnel \
-    --instance-id $INSTANCE_ID \
-    --remote-port 3389 \
-    --local-port 13389
+```bash
+# CDK出力に表示されるコマンドを実行（例）
+aws ec2-instance-connect open-tunnel --instance-id <インスタンスID> --remote-port 3389 --local-port 13389
 ```
 
 ### 4. RDPクライアントで接続
