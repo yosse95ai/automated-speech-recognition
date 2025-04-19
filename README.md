@@ -1,4 +1,4 @@
-# S3Arc - VPC with Private Subnet, EC2 Instance Connect, and S3 VPC Endpoint
+# S3Arc - VPC with Private Subnet, EC2 Instance Connect, S3 and Transcribe VPC Endpoints
 
 このCDKプロジェクトでは、以下のリソースを作成します：
 
@@ -9,7 +9,9 @@
 3. OnpremVPC内のプライベートサブネットにWindows Serverインスタンス
 4. EC2インスタンスコネクトエンドポイント（インスタンスへのRDP接続用）
 5. API VPC内のS3インターフェースVPCエンドポイント
-6. VPCエンドポイント経由でのみアクセス可能なS3バケット
+6. API VPC内のTranscribeインターフェースVPCエンドポイント
+7. VPCエンドポイント経由でのみアクセス可能なS3バケット（1日後に自動削除）
+8. DNS通信用のセキュリティグループ
 
 ## アーキテクチャ構成図
 
@@ -92,6 +94,56 @@ nslookup s3.ap-northeast-1.amazonaws.com
 # 名前:    s3.ap-northeast-1.amazonaws.com
 # Addresses:  10.1.1.134
 #           10.1.0.162
+```
+
+## 文字起こしの開始方法
+[transcribe.ps1](./packages/cdk/lib/transcribe.ps1) の実行コマンドは以下になる。
+```powershell
+powershell .\transcribe.ps1 `
+    -AWS_ACCESS_KEY_ID <アクセスキー> `
+    -AWS_SECRET_ACCESS_KEY <シークレットキー> `
+    -REGION ap-northeast-1 `
+    -FILE_PATH <ローカルの音声ファイルのパス>
+```
+
+実行の流れは以下の通りである。
+```mermaid
+sequenceDiagram
+    participant User
+    participant PowerShell
+    participant S3 as AWS S3
+    participant Transcribe as AWS Transcribe
+    participant LocalFS as Local File System
+
+    User->>PowerShell: Execute transcribe.ps1 with parameters<br>(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, REGION, FILE_PATH)
+    PowerShell->>PowerShell: Set AWS credentials as environment variables
+    
+    PowerShell->>S3: Upload audio file to S3<br>aws s3 cp $FILE_PATH $S3_PATH
+    S3-->>PowerShell: Upload confirmation
+    
+    PowerShell->>Transcribe: Start transcription job<br>aws transcribe start-transcription-job
+    Transcribe-->>PowerShell: Job initiated
+    
+    loop Check job status
+        PowerShell->>Transcribe: Get job status<br>aws transcribe get-transcription-job
+        Transcribe-->>PowerShell: Return status (IN_PROGRESS)
+        PowerShell->>PowerShell: Sleep 10 seconds
+    end
+    
+    PowerShell->>Transcribe: Get job status<br>aws transcribe get-transcription-job
+    Transcribe-->>PowerShell: Return status (COMPLETED)
+    
+    PowerShell->>Transcribe: Get job details<br>aws transcribe get-transcription-job
+    Transcribe-->>PowerShell: Return job details with transcript URI
+    
+    PowerShell->>S3: Download transcript JSON<br>aws s3api get-object
+    S3-->>PowerShell: Return JSON file
+    
+    PowerShell->>PowerShell: Extract transcript text from JSON
+    PowerShell->>LocalFS: Save transcript text to .txt file
+    
+    PowerShell->>PowerShell: Remove temporary JSON file
+    PowerShell->>User: Display transcript content
 ```
 
 ## アーキテクチャの特徴
