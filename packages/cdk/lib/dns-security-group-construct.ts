@@ -22,7 +22,7 @@ export class DnsSecurityGroupConstruct extends Construct {
       allowAllOutbound: true,
     });
 
-    cdk.Tags.of(this.securityGroup).add('Name', `s3arc-${props.name}SecurityGroup`);
+    cdk.Tags.of(this.securityGroup).add('Name', `s3asr-${props.name}SecurityGroup`);
     
 
     // Allow DNS traffic (UDP port 53) from the source CIDR

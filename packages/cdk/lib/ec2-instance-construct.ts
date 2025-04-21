@@ -49,7 +49,7 @@ export class Ec2InstanceConstruct extends Construct {
 
     cdk.Tags.of(this.securityGroup).add(
       "Name",
-      `s3arc-${props.name}EC2SecurityGroup`
+      `s3asr-${props.name}EC2SecurityGroup`
     );
 
     // Create a separate security group for the EC2 Instance Connect Endpoint
@@ -65,7 +65,7 @@ export class Ec2InstanceConstruct extends Construct {
 
     cdk.Tags.of(this.eicEndpointSG).add(
       "Name",
-      `s3arc-${props.name}EICEndpointSecurityGroup`
+      `s3asr-${props.name}EICEndpointSecurityGroup`
     );
 
     // Allow inbound RDP from the EC2 Instance Connect Endpoint to the EC2 instance
@@ -123,7 +123,7 @@ ${transcribeScript}
     );
     cdk.Tags.of(this.ec2InstanceConnectEndpoint).add(
       "Name",
-      `s3arc-${props.name}EC2InstanceConnectEndpoint`
+      `s3asr-${props.name}EC2InstanceConnectEndpoint`
     );
 
     // Output the instance ID for reference

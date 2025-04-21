@@ -5,7 +5,7 @@ import { MainAppStack } from '../lib/main-app-stack';
 const app = new cdk.App();
 
 // Deploy the unified stack with both VPCs and EC2 instance
-new MainAppStack(app, 'S3ArcStack', {
+new MainAppStack(app, 'S3AsrStack', {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */

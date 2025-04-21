@@ -53,8 +53,8 @@ export class MainAppStack extends cdk.Stack {
     });
     
     // Create S3 bucket with policy allowing access via VPC endpoint
-    new S3BucketConstruct(this, 'S3ArcBucket', {
-      bucketName: 's3-arc-bucket',
+    new S3BucketConstruct(this, 'S3AsrBucket', {
+      bucketName: 's3-asr-bucket',
       vpcEndpointId: s3Endpoint.endpoint.vpcEndpointId,
       objectExpirationDays: 1 // 1日後にオブジェクトを自動削除
     });

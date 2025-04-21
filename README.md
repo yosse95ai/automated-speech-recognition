@@ -1,4 +1,4 @@
-# S3Arc - VPC with Private Subnet, EC2 Instance Connect, S3 and Transcribe VPC Endpoints
+# S3Asr - VPC with Private Subnet, EC2 Instance Connect, S3 and Transcribe VPC Endpoints
 
 このCDKプロジェクトでは、以下のリソースを作成します：
 

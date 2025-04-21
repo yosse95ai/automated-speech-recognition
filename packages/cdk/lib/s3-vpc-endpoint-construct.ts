@@ -21,7 +21,7 @@ export class S3VpcEndpointConstruct extends Construct {
     });
     
     // Add Name tag to the security group
-    cdk.Tags.of(endpointSecurityGroup).add('Name', `s3arc-${props.name}S3EndpointSG`);
+    cdk.Tags.of(endpointSecurityGroup).add('Name', `s3asr-${props.name}S3EndpointSG`);
 
     // Allow HTTPS traffic from within the VPC
     endpointSecurityGroup.addIngressRule(
@@ -41,7 +41,7 @@ export class S3VpcEndpointConstruct extends Construct {
       privateDnsEnabled: false,
     });
 
-    cdk.Tags.of(this.endpoint).add('Name', `s3arc-${props.name}S3Endpoint`);
+    cdk.Tags.of(this.endpoint).add('Name', `s3asr-${props.name}S3Endpoint`);
 
     // Output the VPC endpoint ID
     new cdk.CfnOutput(this, `${props.name}S3EndpointId`, {
