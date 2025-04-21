@@ -27,12 +27,22 @@ npm install
 npm run cdk:deploy
 ```
 
-## デプロイ後に必要な手作業
+## デプロイ後に必要な手作業（オンプレ想定のEC2で検証する場合のみ）
 - S3 VPC EPのPrivate DNSを有効化する
-- Route 53インバウンドエンドポイントをAPI VPCに設定
+  - VPC > エンドポイント > Private DNS 名を変更画面
+    - 「このエンド本とで有効にする」にチェック
+    - 「インバウンドエンドポイントのためにのみプライベート DNS を有効にする」のチェックは外す
+    ![alt text](doc/private-dns.png)
 - Peeringごとのルートテーブルの設定
+    - OnpremVPC：
+    ![alt text](doc/rtb-onprem.png) 
+    - API VPC：
+    ![alt text](doc/rtb-api.png)
 - DHCPオプションセットを作成
+    - CDKで作成されたRoute 53 インバウンドエンドポイントのIPを新規のDHCPオプションを作成時に登録
 - OnpremVPC のDHCPオプションを作成したものに変更
+    - VPC > VPCの設定を編集からDHCP設定を変更
+    ![alt text](doc/dhcp.png)
 
 ## Windows Serverインスタンスへの接続方法
 
@@ -67,10 +77,14 @@ aws ec2-instance-connect open-tunnel --instance-id <インスタンスID> --remo
 
 ### 4. RDPクライアントで接続
 
+事前に、ローカルのフォルダをマウントし、AWS CLI v2 を参照できるようにします。これにより、インターネットに接続できない EC2 に[AWS CLI v2 for Windows の msi](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/getting-started-install.html)をダウンロードします。（ローカルからコピー）
+
 ローカルのRDPクライアントを起動し、以下の情報で接続します：
 - ホスト: localhost:13389
 - ユーザー名: Administrator
 - パスワード: 手順2で取得したパスワード
+
+接続後、ローカルから AWS CLI v2 をリモートにコピーして、インストールを行います。同梱している PS1 ファイルは AWS CLI v2 を利用する前提で、スクリプトが組まれています。
 
 ## S3バケットへのアクセス
 
@@ -79,7 +93,7 @@ S3バケットには、API VPC内のS3インターフェースVPCエンドポイ
 
 PowerShell を開いて、検証
 ```powershell
-nslookup s3.ap-northeast-1.amazonaws.com
+nslookup s3.<s3-endpoint-region>.amazonaws.com
 
 # サーバー:  ip-10-1-1-79.ap-northeast-1.compute.internal
 # Address:  10.1.1.79

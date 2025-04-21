@@ -6,7 +6,7 @@ import { VpcPeeringConstruct } from './vpc-peering-construct';
 import { S3BucketConstruct } from './s3-bucket-construct';
 import { S3VpcEndpointConstruct } from './s3-vpc-endpoint-construct';
 import { TranscribeVpcEndpointConstruct } from './transcribe-vpc-endpoint-construct';
-import { DnsSecurityGroupConstruct } from './dns-security-group-construct';
+import { Route53ResolverEndpointConstruct } from './route53-resolver-endpoint-construct';
 
 export class MainAppStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -59,11 +59,11 @@ export class MainAppStack extends cdk.Stack {
       objectExpirationDays: 1 // 1日後にオブジェクトを自動削除
     });
     
-    // Create DNS Security Group in API VPC to allow DNS traffic from OnpremVPC
-    new DnsSecurityGroupConstruct(this, 'OnpremToAwsDnsSecurityGroup', {
+    // Create Route 53 Resolver Inbound Endpoint in API VPC
+    new Route53ResolverEndpointConstruct(this, "ApiRoute53InboundEndpoint", {
       vpc: apiVpc.vpc,
-      sourceCidr: '10.0.0.0/16',
-      name: 'onpre2awsDNS'
+      name: "Api",
+      sourceCidr: '10.0.0.0/16' // OnpremVPCからのDNSトラフィックを許可
     });
   }
 }

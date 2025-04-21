@@ -76,19 +76,20 @@ export class Ec2InstanceConstruct extends Construct {
     );
 
     // Read the transcribe.ps1 script content
-    const transcribeScriptPath = path.join(__dirname, "transcribe.ps1");
+    const transcribeScriptPath = path.join(__dirname, "ps1", "transcribe.ps1");
     const transcribeScript = fs.readFileSync(transcribeScriptPath, "utf8");
 
     // Prepare user data to save transcribe.ps1 to the Administrator's home folder
     const userData = ec2.UserData.forWindows();
     userData.addCommands(
-      // PowerShell commands to save the script to the Administrator's home folder
+      // PowerShell commands to save the script to the Administrator's home folder with UTF-8 encoding
       `$transcribeScript = @'
 ${transcribeScript}
 '@`,
-      `New-Item -Path "C:\\Users\\Administrator" -Name "transcribe.ps1" -ItemType "file" -Value $transcribeScript -Force`,
+      `$Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $False`,
+      `[System.IO.File]::WriteAllText("C:\\Users\\Administrator\\transcribe.ps1", $transcribeScript, $Utf8NoBomEncoding)`,
       // Log the completion for verification
-      `Write-EventLog -LogName Application -Source "Amazon EC2" -EntryType Information -EventId 1000 -Message "Transcribe script has been saved to Administrator's home folder"`
+      `Write-EventLog -LogName Application -Source "Amazon EC2" -EntryType Information -EventId 1000 -Message "Transcribe script has been saved to Administrator's home folder with UTF-8 encoding"`
     );
 
     // Create a Windows Server EC2 instance in one of the private subnets

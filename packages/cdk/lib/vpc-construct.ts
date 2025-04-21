@@ -11,6 +11,7 @@ export interface VpcConstructProps {
 export class VpcConstruct extends Construct {
   public readonly vpc: ec2.Vpc;
   public readonly privateSubnets: string[];
+  public readonly privateRouteTable: ec2.CfnRouteTable;
 
   constructor(scope: Construct, id: string, props: VpcConstructProps) {
     super(scope, id);
@@ -36,5 +37,28 @@ export class VpcConstruct extends Construct {
     this.privateSubnets = this.vpc.selectSubnets({
       subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
     }).subnetIds;
+
+    // 共通のルートテーブルを作成
+    this.privateRouteTable = new ec2.CfnRouteTable(this, `${props.name}PrivateRouteTable`, {
+      vpcId: this.vpc.vpcId,
+      tags: [
+        {
+          key: 'Name',
+          value: `s3asr-${props.name}-private-route-table`,
+        },
+      ],
+    });
+
+    // すべてのプライベートサブネットに同じルートテーブルを関連付け
+    const privateSubnetIds = this.vpc.selectSubnets({
+      subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
+    }).subnets.map(subnet => subnet.subnetId);
+
+    privateSubnetIds.forEach((subnetId, index) => {
+      new ec2.CfnSubnetRouteTableAssociation(this, `${props.name}PrivateSubnetRouteTableAssociation${index}`, {
+        routeTableId: this.privateRouteTable.ref,
+        subnetId: subnetId,
+      });
+    });
   }
 }

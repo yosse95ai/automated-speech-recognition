@@ -27,34 +27,40 @@ export class VpcPeeringConstruct extends Construct {
       ]
     });
 
-    // Get all route tables from source VPC
-    const sourceRouteTables = this.getVpcRouteTables(props.sourceVpc);
+    // カスタムルートテーブルを取得
+    const sourceVpcInstance = props.sourceVpc as any;
+    const targetVpcInstance = props.targetVpc as any;
     
-    // Get all route tables from target VPC
-    const targetRouteTables = this.getVpcRouteTables(props.targetVpc);
+    // ソースVPCのルートテーブル取得
+    const sourceRouteTable = sourceVpcInstance.privateRouteTable.ref;
+    
+    // ターゲットVPCのルートテーブル取得
+    const targetRouteTable = targetVpcInstance.privateRouteTable.ref;
 
-    // Create routes from source VPC to target VPC
-    sourceRouteTables.forEach((routeTable, index) => {
-      new ec2.CfnRoute(this, `${props.sourceName}To${props.targetName}Route${index}`, {
-        routeTableId: routeTable,
-        destinationCidrBlock: props.targetVpc.vpcCidrBlock,
-        vpcPeeringConnectionId: this.peeringConnection.ref
-      });
+    // Create route from source VPC to target VPC
+    new ec2.CfnRoute(this, `${props.sourceName}To${props.targetName}Route`, {
+      routeTableId: sourceRouteTable,
+      destinationCidrBlock: props.targetVpc.vpcCidrBlock,
+      vpcPeeringConnectionId: this.peeringConnection.ref
+    });
+    
+    // Log the route table configuration for verification
+    new cdk.CfnOutput(this, `${props.sourceName}RouteTableConfig`, {
+      value: `Route table ${sourceRouteTable} configured to route ${props.targetVpc.vpcCidrBlock} traffic to peering connection ${this.peeringConnection.ref}`,
+      description: `Route configuration for ${props.sourceName} VPC`
     });
 
-    // Create routes from target VPC to source VPC
-    targetRouteTables.forEach((routeTable, index) => {
-      new ec2.CfnRoute(this, `${props.targetName}To${props.sourceName}Route${index}`, {
-        routeTableId: routeTable,
-        destinationCidrBlock: props.sourceVpc.vpcCidrBlock,
-        vpcPeeringConnectionId: this.peeringConnection.ref
-      });
-      
-      // Log the route table configuration for verification
-      new cdk.CfnOutput(this, `${props.targetName}RouteTable${index}Config`, {
-        value: `Route table ${routeTable} configured to route ${props.sourceVpc.vpcCidrBlock} traffic to peering connection ${this.peeringConnection.ref}`,
-        description: `Route configuration for ${props.targetName} subnet ${index}`
-      });
+    // Create route from target VPC to source VPC
+    new ec2.CfnRoute(this, `${props.targetName}To${props.sourceName}Route`, {
+      routeTableId: targetRouteTable,
+      destinationCidrBlock: props.sourceVpc.vpcCidrBlock,
+      vpcPeeringConnectionId: this.peeringConnection.ref
+    });
+    
+    // Log the route table configuration for verification
+    new cdk.CfnOutput(this, `${props.targetName}RouteTableConfig`, {
+      value: `Route table ${targetRouteTable} configured to route ${props.sourceVpc.vpcCidrBlock} traffic to peering connection ${this.peeringConnection.ref}`,
+      description: `Route configuration for ${props.targetName} VPC`
     });
 
     // Output the VPC Peering Connection ID
@@ -63,23 +69,4 @@ export class VpcPeeringConstruct extends Construct {
       description: `The ID of the VPC Peering Connection between ${props.sourceName} and ${props.targetName}`
     });
   }
-
-  // Helper method to get all route tables from a VPC
-  private getVpcRouteTables(vpc: ec2.Vpc): string[] {
-    const routeTables: string[] = [];
-    
-    // Get private subnets route tables
-    vpc.privateSubnets.forEach(subnet => {
-      // Use reflection to access the protected routeTable property
-      // This is a workaround as the routeTable property is protected
-      const routeTable = (subnet as any).routeTable;
-      if (routeTable && routeTable.routeTableId) {
-        routeTables.push(routeTable.routeTableId);
-      }
-    });
-    
-    return routeTables;
-  }
-  
 }
-
