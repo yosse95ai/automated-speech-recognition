@@ -105,6 +105,17 @@ nslookup s3.<s3-endpoint-region>.amazonaws.com
 ```
 
 ## 文字起こしの開始方法
+### Linux (シェルスクリプト)
+[transcribe.sh](./packages/cdk/lib/transcribe.sh) の実行コマンドは以下になる。
+```bash
+sh ./transcribe.sh \
+    --aws-access-key-id <key> \
+    --aws-secret-access-key <secret> \
+    --region <region> \
+    --file-path <path>
+```
+
+### Windows (PowerShell)
 [transcribe.ps1](./packages/cdk/lib/transcribe.ps1) の実行コマンドは以下になる。
 ```powershell
 powershell .\transcribe.ps1 `

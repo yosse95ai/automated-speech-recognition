@@ -20,6 +20,7 @@
     "packages/*"
   ],
   "dependencies": {
-    "aws-cdk": "^2.1007.0"
+    "aws-cdk": "^2.1010.0",
+    "aws-cdk-lib": "^2.190.0"
   }
 }

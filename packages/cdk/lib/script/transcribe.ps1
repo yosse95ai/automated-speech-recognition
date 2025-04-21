@@ -11,7 +11,7 @@ $env:AWS_SECRET_ACCESS_KEY = "$AWS_SECRET_ACCESS_KEY"
 $env:AWS_DEFAULT_REGION = "$REGION"
 
 # S3 へ音声ファイルアップロード
-$BUCKET_NAME="s3-asr-bucket"
+$BUCKET_NAME="s3-asr-bucket" # !!CHANGE your bucket name
 $FILENAME = [System.IO.Path]::GetFileName($FILE_PATH)
 $S3_PATH = "s3://$BUCKET_NAME/Audio/$FILENAME"
 

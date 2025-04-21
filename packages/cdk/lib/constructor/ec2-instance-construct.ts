@@ -14,7 +14,7 @@ export class Ec2InstanceConstruct extends Construct {
   public readonly instance: ec2.Instance;
   public readonly securityGroup: ec2.SecurityGroup;
   public readonly eicEndpointSG: ec2.SecurityGroup;
-  public readonly ec2InstanceConnectEndpoint: ec2.CfnInstanceConnectEndpoint;
+  public readonly ec2InstanceConnectEndpoint: cdk.aws_ec2.CfnInstanceConnectEndpoint;
   public readonly keyPair: ec2.CfnKeyPair;
 
   constructor(scope: Construct, id: string, props: Ec2InstanceConstructProps) {
@@ -76,7 +76,7 @@ export class Ec2InstanceConstruct extends Construct {
     );
 
     // Read the transcribe.ps1 script content
-    const transcribeScriptPath = path.join(__dirname, "ps1", "transcribe.ps1");
+    const transcribeScriptPath = path.join(__dirname, "../script", "transcribe.ps1");
     const transcribeScript = fs.readFileSync(transcribeScriptPath, "utf8");
 
     // Prepare user data to save transcribe.ps1 to the Administrator's home folder
@@ -107,7 +107,11 @@ ${transcribeScript}
       ),
       securityGroup: this.securityGroup,
       role: ec2Role,
-      keyName: cdk.Token.asString(this.keyPair.ref),
+      keyPair: ec2.KeyPair.fromKeyPairName(
+        this,
+        `${props.name}ImportedKeyPair`,
+        cdk.Token.asString(this.keyPair.ref)
+      ),
       userData: userData,
     });
 

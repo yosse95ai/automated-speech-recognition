@@ -1,20 +1,22 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { VpcConstruct } from './vpc-construct';
-import { Ec2InstanceConstruct } from './ec2-instance-construct';
-import { VpcPeeringConstruct } from './vpc-peering-construct';
-import { S3BucketConstruct } from './s3-bucket-construct';
-import { S3VpcEndpointConstruct } from './s3-vpc-endpoint-construct';
-import { TranscribeVpcEndpointConstruct } from './transcribe-vpc-endpoint-construct';
-import { Route53ResolverEndpointConstruct } from './route53-resolver-endpoint-construct';
+import { VpcConstruct } from './constructor/vpc-construct';
+import { Ec2InstanceConstruct } from './constructor/ec2-instance-construct';
+import { VpcPeeringConstruct } from './constructor/vpc-peering-construct';
+import { S3BucketConstruct } from './constructor/s3-bucket-construct';
+import { S3VpcEndpointConstruct } from './constructor/s3-vpc-endpoint-construct';
+import { TranscribeVpcEndpointConstruct } from './constructor/transcribe-vpc-endpoint-construct';
+import { Route53ResolverEndpointConstruct } from './constructor/route53-resolver-endpoint-construct';
+import { EnvironmentProps } from '../bin/environment';
 
+export interface MainAppStackProps extends cdk.StackProps, Omit<EnvironmentProps, 'awsRegion' | 'awsAccount'>{}
 export class MainAppStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: MainAppStackProps) {
     super(scope, id, props);
 
     // Create the Onprem VPC with EC2 instance (1 AZ)
     const OnpremVpc = new VpcConstruct(this, 'OnpremVpc', {
-      cidr: '10.0.0.0/16',
+      cidr: props.onpremiseCidr,
       name: 'Onprem',
       maxAzs: 1 // OnpremVPCは1つのAZのみを使用
     });
@@ -27,7 +29,7 @@ export class MainAppStack extends cdk.Stack {
 
     // Create the API VPC with 2 AZs
     const apiVpc = new VpcConstruct(this, 'ApiVpc', {
-      cidr: '10.1.0.0/16',
+      cidr: props.apiVpcCidr,
       name: 'Api',
       maxAzs: 2 // API VPCは2つのAZを使用
     });
@@ -54,7 +56,7 @@ export class MainAppStack extends cdk.Stack {
     
     // Create S3 bucket with policy allowing access via VPC endpoint
     new S3BucketConstruct(this, 'S3AsrBucket', {
-      bucketName: 's3-asr-bucket',
+      bucketName: props.bucketName,
       vpcEndpointId: s3Endpoint.endpoint.vpcEndpointId,
       objectExpirationDays: 1 // 1日後にオブジェクトを自動削除
     });
