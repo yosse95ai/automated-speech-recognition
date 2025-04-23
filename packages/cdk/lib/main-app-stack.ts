@@ -1,12 +1,14 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { VpcConstruct } from './constructor/vpc-construct';
-import { Ec2InstanceConstruct } from './constructor/ec2-instance-construct';
-import { VpcPeeringConstruct } from './constructor/vpc-peering-construct';
-import { S3BucketConstruct } from './constructor/s3-bucket-construct';
-import { S3VpcEndpointConstruct } from './constructor/s3-vpc-endpoint-construct';
-import { TranscribeVpcEndpointConstruct } from './constructor/transcribe-vpc-endpoint-construct';
-import { Route53ResolverEndpointConstruct } from './constructor/route53-resolver-endpoint-construct';
+import { Vpc as OnpremVpcConstruct } from './constructor/onprem/vpc';
+import { Ec2Instance } from './constructor/onprem/ec2-instance';
+import { VpcPeering } from './constructor/vpc-peering';
+import { S3Bucket } from './constructor/api/s3-bucket';
+import { S3VpcEndpoint } from './constructor/api/s3-vpc-endpoint';
+import { TranscribeVpcEndpoint } from './constructor/api/transcribe-vpc-endpoint';
+import { Route53ResolverEndpoint } from './constructor/api/route53-resolver-endpoint';
+import { DifyVpcEndpoints } from './constructor/api/dify-vpc-endpoints';
+import { Vpc as ApiVpcConstruct } from './constructor/api/vpc';
 import { EnvironmentProps } from '../bin/environment';
 
 export interface MainAppStackProps extends cdk.StackProps, Omit<EnvironmentProps, 'awsRegion' | 'awsAccount'>{}
@@ -15,57 +17,66 @@ export class MainAppStack extends cdk.Stack {
     super(scope, id, props);
 
     // Create the Onprem VPC with EC2 instance (1 AZ)
-    const OnpremVpc = new VpcConstruct(this, 'OnpremVpc', {
+    const onpremVpc = new OnpremVpcConstruct(this, 'OnpremVpc', {
       cidr: props.onpremiseCidr,
       name: 'Onprem',
-      maxAzs: 1 // OnpremVPCは1つのAZのみを使用
+      maxAzs: 1
     });
 
     // Create EC2 instance in the Onprem VPC
-    new Ec2InstanceConstruct(this, 'OnpremEc2Instance', {
-      vpc: OnpremVpc.vpc,
+    new Ec2Instance(this, 'OnpremEc2Instance', {
+      vpc: onpremVpc.vpc,
       name: 'Onprem'
     });
 
-    // Create the API VPC with 2 AZs
-    const apiVpc = new VpcConstruct(this, 'ApiVpc', {
+    // Create the API VPC with 2 AZs and explicit subnets
+    const apiVpc = new ApiVpcConstruct(this, 'ApiVpc', {
       cidr: props.apiVpcCidr,
       name: 'Api',
-      maxAzs: 2 // API VPCは2つのAZを使用
+      maxAzs: 2
     });
 
     // Create VPC Peering between Onprem VPC and API VPC
-    const vpcPeering = new VpcPeeringConstruct(this, 'OnpremToApiVpcPeering', {
-      sourceVpc: OnpremVpc.vpc,
+    const vpcPeering = new VpcPeering(this, 'OnpremToApiVpcPeering', {
+      sourceVpc: onpremVpc.vpc,
       targetVpc: apiVpc.vpc,
       sourceName: 'Onprem',
       targetName: 'Api'
     });
     
     // Create S3 VPC Endpoint in API VPC
-    const s3Endpoint = new S3VpcEndpointConstruct(this, 'ApiS3VpcEndpoint', {
+    const s3Endpoint = new S3VpcEndpoint(this, 'ApiS3VpcEndpoint', {
       vpc: apiVpc.vpc,
-      name: 'Api'
+      name: 'Api',
+      subnets: apiVpc.privateSubnets
     });
     
     // Create Transcribe VPC Endpoint in API VPC
-    const transcribeEndpoint = new TranscribeVpcEndpointConstruct(this, 'ApiTranscribeVpcEndpoint', {
+    const transcribeEndpoint = new TranscribeVpcEndpoint(this, 'ApiTranscribeVpcEndpoint', {
       vpc: apiVpc.vpc,
-      name: 'Api'
+      name: 'Api',
+      subnets: apiVpc.privateSubnets
     });
     
     // Create S3 bucket with policy allowing access via VPC endpoint
-    new S3BucketConstruct(this, 'S3AsrBucket', {
+    new S3Bucket(this, 'S3AsrBucket', {
       bucketName: props.bucketName,
       vpcEndpointId: s3Endpoint.endpoint.vpcEndpointId,
-      objectExpirationDays: 1 // 1日後にオブジェクトを自動削除
     });
     
     // Create Route 53 Resolver Inbound Endpoint in API VPC
-    new Route53ResolverEndpointConstruct(this, "ApiRoute53InboundEndpoint", {
+    new Route53ResolverEndpoint(this, "ApiRoute53InboundEndpoint", {
       vpc: apiVpc.vpc,
       name: "Api",
-      sourceCidr: '10.0.0.0/16' // OnpremVPCからのDNSトラフィックを許可
+      sourceCidr: '10.0.0.0/16', // OnpremVPCからのDNSトラフィックを許可
+      subnets: apiVpc.privateSubnets
+    });
+    
+    // Create all necessary VPC endpoints for Dify deployment in API VPC
+    new DifyVpcEndpoints(this, "ApiDifyVpcEndpoints", {
+      vpc: apiVpc.vpc,
+      name: "Api",
+      subnets: apiVpc.privateSubnets
     });
   }
 }

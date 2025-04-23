@@ -2,17 +2,17 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 
-export interface VpcPeeringConstructProps {
+export interface VpcPeeringProps {
   sourceVpc: ec2.Vpc;
   targetVpc: ec2.Vpc;
   sourceName: string;
   targetName: string;
 }
 
-export class VpcPeeringConstruct extends Construct {
+export class VpcPeering extends Construct {
   public readonly peeringConnection: ec2.CfnVPCPeeringConnection;
 
-  constructor(scope: Construct, id: string, props: VpcPeeringConstructProps) {
+  constructor(scope: Construct, id: string, props: VpcPeeringProps) {
     super(scope, id);
 
     // Create VPC Peering Connection

@@ -2,15 +2,16 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 
-export interface S3VpcEndpointConstructProps {
+export interface S3VpcEndpointProps {
   vpc: ec2.Vpc;
   name: string;
+  subnets: ec2.ISubnet[];
 }
 
-export class S3VpcEndpointConstruct extends Construct {
+export class S3VpcEndpoint extends Construct {
   public readonly endpoint: ec2.InterfaceVpcEndpoint;
 
-  constructor(scope: Construct, id: string, props: S3VpcEndpointConstructProps) {
+  constructor(scope: Construct, id: string, props: S3VpcEndpointProps) {
     super(scope, id);
 
     // Create a security group for the VPC endpoint
@@ -35,7 +36,7 @@ export class S3VpcEndpointConstruct extends Construct {
       vpc: props.vpc,
       service: ec2.InterfaceVpcEndpointAwsService.S3,
       subnets: {
-        subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
+        subnets: props.subnets,
       },
       securityGroups: [endpointSecurityGroup],
       privateDnsEnabled: false,

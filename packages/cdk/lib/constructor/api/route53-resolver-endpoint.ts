@@ -4,23 +4,24 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as route53resolver from 'aws-cdk-lib/aws-route53resolver';
 
 /**
- * Route 53 Resolver Endpoint Construct Props
+ * Route 53 Resolver Endpoint Props
  */
-export interface Route53ResolverEndpointConstructProps {
+export interface Route53ResolverEndpointProps {
   vpc: ec2.Vpc;
   name: string;
   sourceCidr: string; // DNSトラフィックを許可するソースCIDR
+  subnets: ec2.ISubnet[];
 }
 
 /**
- * Route 53 Resolver Endpoint Construct
+ * Route 53 Resolver Endpoint
  * Creates a Route 53 Resolver Inbound Endpoint with appropriate security group
  */
-export class Route53ResolverEndpointConstruct extends Construct {
+export class Route53ResolverEndpoint extends Construct {
   public readonly inboundEndpoint: route53resolver.CfnResolverEndpoint;
   public readonly securityGroup: ec2.SecurityGroup;
 
-  constructor(scope: Construct, id: string, props: Route53ResolverEndpointConstructProps) {
+  constructor(scope: Construct, id: string, props: Route53ResolverEndpointProps) {
     super(scope, id);
 
     // DNSトラフィック用のセキュリティグループを作成
@@ -47,15 +48,15 @@ export class Route53ResolverEndpointConstruct extends Construct {
       `Allow DNS (UDP) traffic from ${props.sourceCidr}`
     );
 
-    // プライベートサブネットを取得（少なくとも2つのAZが必要）
-    const privateSubnets = props.vpc.selectSubnets({
-      subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
-    }).subnetIds;
+    // 少なくとも2つのサブネットが必要
+    if (props.subnets.length < 2) {
+      throw new Error(`At least 2 subnets are required for Route 53 Resolver Endpoint, but only ${props.subnets.length} provided`);
+    }
 
     // Route 53 Resolver インバウンドエンドポイントを作成
     this.inboundEndpoint = new route53resolver.CfnResolverEndpoint(this, `${props.name}Route53InboundEndpoint`, {
       direction: 'INBOUND',
-      ipAddresses: privateSubnets.slice(0, 2).map(subnetId => ({ subnetId })),
+      ipAddresses: props.subnets.slice(0, 2).map(subnet => ({ subnetId: subnet.subnetId })),
       securityGroupIds: [this.securityGroup.securityGroupId],
       name: `${props.name}-inbound-endpoint`,
     });

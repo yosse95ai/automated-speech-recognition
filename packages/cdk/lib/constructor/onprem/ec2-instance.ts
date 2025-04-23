@@ -5,19 +5,19 @@ import * as iam from "aws-cdk-lib/aws-iam";
 import * as fs from "fs";
 import * as path from "path";
 
-export interface Ec2InstanceConstructProps {
+export interface Ec2InstanceProps {
   vpc: ec2.Vpc;
   name: string;
 }
 
-export class Ec2InstanceConstruct extends Construct {
+export class Ec2Instance extends Construct {
   public readonly instance: ec2.Instance;
   public readonly securityGroup: ec2.SecurityGroup;
   public readonly eicEndpointSG: ec2.SecurityGroup;
   public readonly ec2InstanceConnectEndpoint: cdk.aws_ec2.CfnInstanceConnectEndpoint;
   public readonly keyPair: ec2.CfnKeyPair;
 
-  constructor(scope: Construct, id: string, props: Ec2InstanceConstructProps) {
+  constructor(scope: Construct, id: string, props: Ec2InstanceProps) {
     super(scope, id);
 
     // Create a key pair for Windows RDP authentication with a unique name
@@ -76,7 +76,7 @@ export class Ec2InstanceConstruct extends Construct {
     );
 
     // Read the transcribe.ps1 script content
-    const transcribeScriptPath = path.join(__dirname, "../script", "transcribe.ps1");
+    const transcribeScriptPath = path.join(__dirname, "../../script", "transcribe.ps1");
     const transcribeScript = fs.readFileSync(transcribeScriptPath, "utf8");
 
     // Prepare user data to save transcribe.ps1 to the Administrator's home folder
@@ -96,7 +96,9 @@ ${transcribeScript}
     this.instance = new ec2.Instance(this, `${props.name}PrivateEC2Instance`, {
       vpc: props.vpc,
       vpcSubnets: {
-        subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
+        subnets: props.vpc instanceof ec2.Vpc 
+          ? props.vpc.privateSubnets 
+          : props.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }).subnets,
       },
       instanceType: ec2.InstanceType.of(
         ec2.InstanceClass.T3,
@@ -120,9 +122,11 @@ ${transcribeScript}
       this,
       `${props.name}EC2InstanceConnectEndpoint`,
       {
-        subnetId: props.vpc.selectSubnets({
-          subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
-        }).subnetIds[0],
+        subnetId: props.vpc instanceof ec2.Vpc && props.vpc.privateSubnets.length > 0
+          ? props.vpc.privateSubnets[0].subnetId
+          : props.vpc.selectSubnets({
+              subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
+            }).subnetIds[0],
         securityGroupIds: [this.eicEndpointSG.securityGroupId],
       }
     );

@@ -2,15 +2,16 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 
-export interface TranscribeVpcEndpointConstructProps {
+export interface TranscribeVpcEndpointProps {
   vpc: ec2.Vpc;
   name: string;
+  subnets: ec2.ISubnet[];
 }
 
-export class TranscribeVpcEndpointConstruct extends Construct {
+export class TranscribeVpcEndpoint extends Construct {
   public readonly endpoint: ec2.InterfaceVpcEndpoint;
 
-  constructor(scope: Construct, id: string, props: TranscribeVpcEndpointConstructProps) {
+  constructor(scope: Construct, id: string, props: TranscribeVpcEndpointProps) {
     super(scope, id);
 
     // Create a security group for the Transcribe VPC endpoint
@@ -35,7 +36,7 @@ export class TranscribeVpcEndpointConstruct extends Construct {
       vpc: props.vpc,
       service: ec2.InterfaceVpcEndpointAwsService.TRANSCRIBE,
       subnets: {
-        subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
+        subnets: props.subnets,
       },
       securityGroups: [endpointSecurityGroup],
       privateDnsEnabled: true, // Transcribeでは通常プライベートDNSを有効にします
