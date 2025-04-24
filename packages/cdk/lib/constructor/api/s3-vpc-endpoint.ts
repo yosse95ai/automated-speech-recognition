@@ -6,6 +6,7 @@ export interface S3VpcEndpointProps {
   vpc: ec2.Vpc;
   name: string;
   subnets: ec2.ISubnet[];
+  souceCidr: string;
 }
 
 export class S3VpcEndpoint extends Construct {
@@ -26,7 +27,7 @@ export class S3VpcEndpoint extends Construct {
 
     // Allow HTTPS traffic from within the VPC
     endpointSecurityGroup.addIngressRule(
-      ec2.Peer.ipv4("10.0.0.0/16"),
+      ec2.Peer.ipv4(props.souceCidr),
       ec2.Port.tcp(443),
       'Allow HTTPS traffic from within the VPC'
     );

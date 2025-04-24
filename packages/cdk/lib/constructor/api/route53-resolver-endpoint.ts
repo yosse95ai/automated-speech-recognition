@@ -28,7 +28,6 @@ export class Route53ResolverEndpoint extends Construct {
     this.securityGroup = new ec2.SecurityGroup(this, `${props.name}Route53SecurityGroup`, {
       vpc: props.vpc,
       description: `Allow DNS traffic from ${props.sourceCidr}`,
-      securityGroupName: `${cdk.Stack.of(this).stackName}-${props.name}Route53SG`,
       allowAllOutbound: true,
     });
 

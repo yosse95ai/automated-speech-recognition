@@ -6,7 +6,8 @@ import {
   InterfaceVpcEndpointAwsService,
   IVpc,
   ISubnet,
-  SubnetSelection
+  SubnetSelection,
+  CfnRouteTable
 } from 'aws-cdk-lib/aws-ec2';
 
 export interface DifyVpcEndpointsProps {
@@ -24,6 +25,11 @@ export interface DifyVpcEndpointsProps {
    * Subnets to place the endpoints in
    */
   subnets: ISubnet[];
+
+  /**
+   * Route table to add gateway endpoint routes to
+   */
+  routeTable?: CfnRouteTable;
 }
 
 /**

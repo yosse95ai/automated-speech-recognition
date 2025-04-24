@@ -20,7 +20,6 @@ export class MainAppStack extends cdk.Stack {
     const onpremVpc = new OnpremVpcConstruct(this, 'OnpremVpc', {
       cidr: props.onpremiseCidr,
       name: 'Onprem',
-      maxAzs: 1
     });
 
     // Create EC2 instance in the Onprem VPC
@@ -48,27 +47,29 @@ export class MainAppStack extends cdk.Stack {
     const s3Endpoint = new S3VpcEndpoint(this, 'ApiS3VpcEndpoint', {
       vpc: apiVpc.vpc,
       name: 'Api',
-      subnets: apiVpc.privateSubnets
+      subnets: apiVpc.privateSubnets,
+      souceCidr: props.onpremiseCidr
     });
     
     // Create Transcribe VPC Endpoint in API VPC
     const transcribeEndpoint = new TranscribeVpcEndpoint(this, 'ApiTranscribeVpcEndpoint', {
       vpc: apiVpc.vpc,
       name: 'Api',
-      subnets: apiVpc.privateSubnets
+      subnets: apiVpc.privateSubnets,
+      souceCidr: props.onpremiseCidr
     });
     
-    // Create S3 bucket with policy allowing access via VPC endpoint
-    new S3Bucket(this, 'S3AsrBucket', {
+    // Create Transcribe Bucket
+    const s3Bucket = new S3Bucket(this, 'S3AsrBucket', {
       bucketName: props.bucketName,
-      vpcEndpointId: s3Endpoint.endpoint.vpcEndpointId,
+      vpcEndpointId: s3Endpoint.endpoint.vpcEndpointId
     });
     
     // Create Route 53 Resolver Inbound Endpoint in API VPC
     new Route53ResolverEndpoint(this, "ApiRoute53InboundEndpoint", {
       vpc: apiVpc.vpc,
       name: "Api",
-      sourceCidr: '10.0.0.0/16', // OnpremVPCからのDNSトラフィックを許可
+      sourceCidr: props.onpremiseCidr, // OnpremVPCからのDNSトラフィックを許可
       subnets: apiVpc.privateSubnets
     });
     
@@ -76,7 +77,8 @@ export class MainAppStack extends cdk.Stack {
     new DifyVpcEndpoints(this, "ApiDifyVpcEndpoints", {
       vpc: apiVpc.vpc,
       name: "Api",
-      subnets: apiVpc.privateSubnets
+      subnets: apiVpc.privateSubnets,
+      routeTable: apiVpc.privateRouteTable
     });
   }
 }

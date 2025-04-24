@@ -4,11 +4,11 @@ import { MainAppStack } from '../lib/main-app-stack';
 import { EnvironmentProps } from "./environment";
 
 export const props: EnvironmentProps = {
-  awsRegion: 'us-west-2',
+  awsRegion: "us-west-2",
   awsAccount: process.env.CDK_DEFAULT_ACCOUNT!,
-  bucketName: "s3-asr-bucket", // change your bucket name
-  apiVpcCidr: '10.1.0.0/16',
-  onpremiseCidr: '10.0.0.0/16'
+  bucketName: "s3-asr-bucket",
+  apiVpcCidr: "10.0.0.0/16",
+  onpremiseCidr: "10.128.0.0/16",
 };
 
 const app = new cdk.App();

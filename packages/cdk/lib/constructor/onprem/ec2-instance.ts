@@ -96,14 +96,12 @@ ${transcribeScript}
     this.instance = new ec2.Instance(this, `${props.name}PrivateEC2Instance`, {
       vpc: props.vpc,
       vpcSubnets: {
-        subnets: props.vpc instanceof ec2.Vpc 
-          ? props.vpc.privateSubnets 
-          : props.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }).subnets,
+        subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
       },
       instanceType: ec2.InstanceType.of(
         ec2.InstanceClass.T3,
-        ec2.InstanceSize.LARGE
-      ), // Windows needs more resources
+        ec2.InstanceSize.XLARGE
+      ), 
       machineImage: ec2.MachineImage.latestWindows(
         ec2.WindowsVersion.WINDOWS_SERVER_2022_JAPANESE_FULL_BASE
       ),
@@ -117,16 +115,16 @@ ${transcribeScript}
       userData: userData,
     });
 
+    cdk.Tags.of(this.instance).add("Name", `s3asr-${props.name}EC2Instance`)
+
     // Enable EC2 Instance Connect Endpoint in the VPC
     this.ec2InstanceConnectEndpoint = new ec2.CfnInstanceConnectEndpoint(
       this,
       `${props.name}EC2InstanceConnectEndpoint`,
       {
-        subnetId: props.vpc instanceof ec2.Vpc && props.vpc.privateSubnets.length > 0
-          ? props.vpc.privateSubnets[0].subnetId
-          : props.vpc.selectSubnets({
-              subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
-            }).subnetIds[0],
+        subnetId: props.vpc.isolatedSubnets.length > 0
+          ? props.vpc.isolatedSubnets[0].subnetId
+          : "",
         securityGroupIds: [this.eicEndpointSG.securityGroupId],
       }
     );
@@ -134,13 +132,6 @@ ${transcribeScript}
       "Name",
       `s3asr-${props.name}EC2InstanceConnectEndpoint`
     );
-
-    // Output the instance ID for reference
-    new cdk.CfnOutput(this, `${props.name}InstanceId`, {
-      key: `${props.name}InstanceId`,
-      value: this.instance.instanceId,
-      description: `The ID of the ${props.name} EC2 instance`,
-    });
 
     // Output the key pair name
     new cdk.CfnOutput(this, `${props.name}GetKeyPair`, {
