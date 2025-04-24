@@ -66,7 +66,7 @@ export class MainAppStack extends cdk.Stack {
     });
     
     // Create Route 53 Resolver Inbound Endpoint in API VPC
-    new Route53ResolverEndpoint(this, "ApiRoute53InboundEndpoint", {
+    const route53Endpoint = new Route53ResolverEndpoint(this, "ApiRoute53InboundEndpoint", {
       vpc: apiVpc.vpc,
       name: "Api",
       sourceCidr: props.onpremiseCidr, // OnpremVPCからのDNSトラフィックを許可

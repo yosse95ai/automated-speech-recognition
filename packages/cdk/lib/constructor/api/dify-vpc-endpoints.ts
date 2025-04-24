@@ -1,4 +1,5 @@
 import { Construct } from 'constructs';
+import * as cdk from 'aws-cdk-lib';
 import { 
   GatewayVpcEndpoint,
   GatewayVpcEndpointAwsService,
@@ -6,7 +7,6 @@ import {
   InterfaceVpcEndpointAwsService,
   IVpc,
   ISubnet,
-  SubnetSelection,
   CfnRouteTable
 } from 'aws-cdk-lib/aws-ec2';
 
@@ -71,13 +71,14 @@ export class DifyVpcEndpoints extends Construct {
     ];
 
     serviceList.forEach((item) => {
-      new InterfaceVpcEndpoint(this, item.service.shortName, {
+      const endpoint =new InterfaceVpcEndpoint(this, item.service.shortName, {
         vpc: props.vpc,
         service: item.service,
         subnets: {
           subnets: props.subnets,
         },
       });
+      cdk.Tags.of(endpoint).add('Name', `s3asr-${item.service.shortName}Endpoint`);
     });
 
     // for ECS Fargate and Dify app
