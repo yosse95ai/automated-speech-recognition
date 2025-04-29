@@ -93,7 +93,8 @@ S3バケットには、API VPC内のS3インターフェースVPCエンドポイ
 
 PowerShell を開いて、検証
 ```powershell
-nslookup s3.<s3-endpoint-region>.amazonaws.com
+$env:VARIABLE_NAME = "ap-northeast-1"
+nslookup s3.$env:VARIABLE_NAME.amazonaws.com
 
 # サーバー:  ip-10-1-1-79.ap-northeast-1.compute.internal
 # Address:  10.1.1.79

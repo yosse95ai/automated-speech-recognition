@@ -10,7 +10,6 @@ export interface VpcProps {
 export class Vpc extends Construct {
   public readonly vpc: ec2.Vpc;
   public readonly privateSubnets: ec2.ISubnet[];
-  public readonly privateRouteTable: ec2.CfnRouteTable;
 
   constructor(scope: Construct, id: string, props: VpcProps) {
     super(scope, id);
@@ -39,24 +38,6 @@ export class Vpc extends Construct {
       cdk.Tags.of(subnet).add('Name', `s3asr-${props.name}-private-subnet-${index+1}`);
       cdk.Tags.of(subnet).add('Network', 'Private');
     });
-
-    // 共通のルートテーブルを作成
-    this.privateRouteTable = new ec2.CfnRouteTable(this, `${props.name}PrivateRouteTable`, {
-      vpcId: this.vpc.vpcId,
-      tags: [
-        {
-          key: 'Name',
-          value: `s3asr-${props.name}-private-route-table`,
-        },
-      ],
-    });
-
-    // すべてのプライベートサブネットに同じルートテーブルを関連付け
-    this.privateSubnets.forEach((subnet, index) => {
-      new ec2.CfnSubnetRouteTableAssociation(this, `${props.name}PrivateSubnetRouteTableAssociation${index+1}`, {
-        routeTableId: this.privateRouteTable.ref,
-        subnetId: subnet.subnetId,
-      });
-    });
+    cdk.Tags.of(this.vpc).add('Name', `s3asr-${props.name}VPC`);
   }
 }

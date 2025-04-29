@@ -78,7 +78,6 @@ export class MainAppStack extends cdk.Stack {
       vpc: apiVpc.vpc,
       name: "Api",
       subnets: apiVpc.privateSubnets,
-      routeTable: apiVpc.privateRouteTable
     });
   }
 }

@@ -6,11 +6,14 @@
     "cdk:build": "npm -w packages/cdk run build",
     "cdk:watch": "npm -w packages/cdk run watch",
     "cdk:test": "npm -w packages/cdk run test",
-    "cdk:deploy": "cd packages/cdk && npm run deploy",
+    "cdk:deploy": "cd packages/cdk && npm run deploy -- -O output.json",
     "cdk:deploy:hotswap": "cd packages/cdk && npm run deploy:hotswap",
     "cdk:destroy": "npm -w packages/cdk run destroy",
     "cdk:lint": "npm -w packages/cdk run lint",
-    "clean": "rm -rf packages/cdk/dist"
+    "clean": "rm -rf packages/cdk/dist",
+    "debug:get-pem": "node -e \"const output = require('./packages/cdk/output.json'); const cmd = output.S3AsrStack['01GetOnpremKeyPairName']; console.log(cmd); require('child_process').execSync(cmd, {stdio: 'inherit'});\"",
+    "debug:pw": "node -e \"const output = require('./packages/cdk/output.json'); const cmd = output.S3AsrStack['02OnpremGetPasswordCommand']; console.log(cmd); require('child_process').execSync(cmd, {stdio: 'inherit'});\"",
+    "debug:rdp": "node -e \"const output = require('./packages/cdk/output.json'); const cmd = output.S3AsrStack['03OnpremRdpTunnelCommand']; console.log(cmd); require('child_process').execSync(cmd, {stdio: 'inherit'});\""
   },
   "devDependencies": {
     "npm-run-all": "^4.1.5",

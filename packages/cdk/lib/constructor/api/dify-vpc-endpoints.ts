@@ -7,7 +7,8 @@ import {
   InterfaceVpcEndpointAwsService,
   IVpc,
   ISubnet,
-  CfnRouteTable
+  CfnRouteTable,
+  Subnet
 } from 'aws-cdk-lib/aws-ec2';
 
 export interface DifyVpcEndpointsProps {
@@ -25,11 +26,6 @@ export interface DifyVpcEndpointsProps {
    * Subnets to place the endpoints in
    */
   subnets: ISubnet[];
-
-  /**
-   * Route table to add gateway endpoint routes to
-   */
-  routeTable?: CfnRouteTable;
 }
 
 /**
@@ -42,21 +38,21 @@ export class DifyVpcEndpoints extends Construct {
     // Create all required interface VPC endpoints for Dify
     const serviceList: { service: InterfaceVpcEndpointAwsService }[] = [
       // for ECS Fargate
-      {
-        service: InterfaceVpcEndpointAwsService.ECR,
-      },
-      {
-        service: InterfaceVpcEndpointAwsService.ECR_DOCKER,
-      },
-      {
-        service: InterfaceVpcEndpointAwsService.SECRETS_MANAGER,
-      },
-      {
-        service: InterfaceVpcEndpointAwsService.SSM,
-      },
-      {
-        service: InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
-      },
+      // {
+      //   service: InterfaceVpcEndpointAwsService.ECR,
+      // },
+      // {
+      //   service: InterfaceVpcEndpointAwsService.ECR_DOCKER,
+      // },
+      // {
+      //   service: InterfaceVpcEndpointAwsService.SECRETS_MANAGER,
+      // },
+      // {
+      //   service: InterfaceVpcEndpointAwsService.SSM,
+      // },
+      // {
+      //   service: InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
+      // },
       // for Dify app
       {
         service: InterfaceVpcEndpointAwsService.BEDROCK_RUNTIME,
@@ -71,7 +67,7 @@ export class DifyVpcEndpoints extends Construct {
     ];
 
     serviceList.forEach((item) => {
-      const endpoint =new InterfaceVpcEndpoint(this, item.service.shortName, {
+      const endpoint = new InterfaceVpcEndpoint(this, item.service.shortName, {
         vpc: props.vpc,
         service: item.service,
         subnets: {
@@ -82,9 +78,10 @@ export class DifyVpcEndpoints extends Construct {
     });
 
     // for ECS Fargate and Dify app
-    new GatewayVpcEndpoint(this, 'S3', {
+    const gwVpce = new GatewayVpcEndpoint(this, 'S3', {
       vpc: props.vpc,
       service: GatewayVpcEndpointAwsService.S3,
     });
+    cdk.Tags.of(gwVpce).add('Name', `s3asr-s3-gatewayEndpoint`);
   }
 }
