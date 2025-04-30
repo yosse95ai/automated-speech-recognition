@@ -1,4 +1,3 @@
-import { Construct } from 'constructs';
 import * as cdk from 'aws-cdk-lib';
 import { 
   GatewayVpcEndpoint,
@@ -7,9 +6,8 @@ import {
   InterfaceVpcEndpointAwsService,
   IVpc,
   ISubnet,
-  CfnRouteTable,
-  Subnet
 } from 'aws-cdk-lib/aws-ec2';
+import { Construct } from 'constructs';
 
 export interface DifyVpcEndpointsProps {
   /**
@@ -26,6 +24,11 @@ export interface DifyVpcEndpointsProps {
    * Subnets to place the endpoints in
    */
   subnets: ISubnet[];
+
+  /**
+   * Debug mode flag
+   */
+  debugMode: boolean;
 }
 
 /**
@@ -37,22 +40,6 @@ export class DifyVpcEndpoints extends Construct {
 
     // Create all required interface VPC endpoints for Dify
     const serviceList: { service: InterfaceVpcEndpointAwsService }[] = [
-      // for ECS Fargate
-      // {
-      //   service: InterfaceVpcEndpointAwsService.ECR,
-      // },
-      // {
-      //   service: InterfaceVpcEndpointAwsService.ECR_DOCKER,
-      // },
-      // {
-      //   service: InterfaceVpcEndpointAwsService.SECRETS_MANAGER,
-      // },
-      // {
-      //   service: InterfaceVpcEndpointAwsService.SSM,
-      // },
-      // {
-      //   service: InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
-      // },
       // for Dify app
       {
         service: InterfaceVpcEndpointAwsService.BEDROCK_RUNTIME,
@@ -60,11 +47,14 @@ export class DifyVpcEndpoints extends Construct {
       {
         service: InterfaceVpcEndpointAwsService.BEDROCK_AGENT_RUNTIME,
       },
-      // for debugging
-      {
-        service: InterfaceVpcEndpointAwsService.SSM_MESSAGES,
-      },
     ];
+
+    // Add SSM_MESSAGES endpoint only in debug mode
+    if (props.debugMode) {
+      serviceList.push({
+        service: InterfaceVpcEndpointAwsService.SSM_MESSAGES,
+      });
+    }
 
     serviceList.forEach((item) => {
       const endpoint = new InterfaceVpcEndpoint(this, item.service.shortName, {

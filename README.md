@@ -1,6 +1,19 @@
-# S3Asr - VPC with Private Subnet, EC2 Instance Connect, S3 and Transcribe VPC Endpoints
+# s3asr w/ Dify Project
 
 このCDKプロジェクトでは、以下のリソースを作成します：
+
+debugMode: false
+
+1. API VPC (Multi-AZ)：
+   - プライベートサブネット: Dify　のリソースと Amazon Transcribe, AMazon S3　の VPC エンドポイントが立ちます。
+   - パブリックサブネット: Dify 初回セットアップ用
+2. S3インターフェースVPCエンドポイント
+3. Dify セットアップ用のNATインスタンス (setup: true の場合)
+4. API VPC内のTranscribeインターフェースVPCエンドポイント
+5. VPCエンドポイント経由でのみアクセス可能なS3バケット（1日後に自動削除）
+6. DNS通信用のセキュリティグループ
+
+debugMode: true
 
 1. プライベートサブネットのみを持つ2つのVPC：
    - OnpremVPC：Windows Serverインスタンスを含む（1つのAZ）
@@ -15,7 +28,7 @@
 
 ## 構成図
 
-![architecture](./architecture.png)
+![architecture](doc/architecture.png)
 
 ## デプロイ方法
 

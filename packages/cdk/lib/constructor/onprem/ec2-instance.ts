@@ -1,9 +1,10 @@
-import * as cdk from "aws-cdk-lib";
-import { Construct } from "constructs";
-import * as ec2 from "aws-cdk-lib/aws-ec2";
-import * as iam from "aws-cdk-lib/aws-iam";
 import * as fs from "fs";
 import * as path from "path";
+
+import * as cdk from "aws-cdk-lib";
+import * as ec2 from "aws-cdk-lib/aws-ec2";
+import * as iam from "aws-cdk-lib/aws-iam";
+import { Construct } from "constructs";
 
 export interface Ec2InstanceProps {
   vpc: ec2.Vpc;

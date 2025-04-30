@@ -2,6 +2,7 @@
   "name": "s3asr",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "cdk:build": "npm -w packages/cdk run build",
     "cdk:watch": "npm -w packages/cdk run watch",
@@ -13,11 +14,17 @@
     "clean": "rm -rf packages/cdk/dist",
     "debug:get-pem": "node -e \"const output = require('./packages/cdk/output.json'); const cmd = output.S3AsrStack['01GetOnpremKeyPairName']; console.log(cmd); require('child_process').execSync(cmd, {stdio: 'inherit'});\"",
     "debug:pw": "node -e \"const output = require('./packages/cdk/output.json'); const cmd = output.S3AsrStack['02OnpremGetPasswordCommand']; console.log(cmd); require('child_process').execSync(cmd, {stdio: 'inherit'});\"",
-    "debug:rdp": "node -e \"const output = require('./packages/cdk/output.json'); const cmd = output.S3AsrStack['03OnpremRdpTunnelCommand']; console.log(cmd); require('child_process').execSync(cmd, {stdio: 'inherit'});\""
+    "debug:rdp": "node -e \"const output = require('./packages/cdk/output.json'); const cmd = output.S3AsrStack['03OnpremRdpTunnelCommand']; console.log(cmd); require('child_process').execSync(cmd, {stdio: 'inherit'});\"",
+    "lint": "eslint . --ext .ts --fix"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
+    "eslint": "^9.25.1",
+    "eslint-plugin-import": "^2.31.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "typescript-eslint": "^7.11.0"
   },
   "workspaces": [
     "packages/*"

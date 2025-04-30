@@ -28,4 +28,16 @@ export interface EnvironmentProps {
    * @example '10.1.0.0/16'
    */
   onpremiseCidr: string;
+
+  /**
+   * True if you want to enable debug mode.
+   * @example false
+   */
+  debugMode: boolean;
+
+  /**
+   * True if you want to setup dify packages and first deployment.
+   * @example false
+   */
+  difySetup: boolean;
 }

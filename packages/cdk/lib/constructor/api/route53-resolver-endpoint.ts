@@ -1,7 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
-import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as route53resolver from 'aws-cdk-lib/aws-route53resolver';
+import { Construct } from 'constructs';
 
 /**
  * Route 53 Resolver Endpoint Props

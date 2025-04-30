@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib';
+
 import { MainAppStack } from '../lib/main-app-stack';
+
 import { EnvironmentProps } from "./environment";
 
 export const props: EnvironmentProps = {
@@ -9,6 +11,12 @@ export const props: EnvironmentProps = {
   bucketName: "s3-asr-bucket",
   apiVpcCidr: "10.0.0.0/16",
   onpremiseCidr: "10.128.0.0/16",
+  
+  // true if you are deploying and/or setting up a dify package for the first time
+  difySetup: true,
+
+  // for debug
+  debugMode: true,
 };
 
 const app = new cdk.App();
