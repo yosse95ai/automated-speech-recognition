@@ -16,6 +16,21 @@ export class Vpc extends Construct {
   constructor(scope: Construct, id: string, props: VpcProps) {
     super(scope, id);
 
+    const natConfig = props.difySetup
+      ? {
+          natGatewayProvider: ec2.NatProvider.instanceV2({
+            instanceType: ec2.InstanceType.of(
+              ec2.InstanceClass.T4G,
+              ec2.InstanceSize.NANO
+            ),
+            associatePublicIpAddress: true,
+          }),
+          natGateways: 1,
+        }
+      : {
+          natGateways: 0,
+        };
+
     this.vpc = new ec2.Vpc(this, `${props.name}VPC`, {
       ipAddresses: ec2.IpAddresses.cidr(props.cidr),
       maxAzs: 2,
@@ -32,18 +47,7 @@ export class Vpc extends Construct {
           mapPublicIpOnLaunch: true,
         },
       ],
-      ...(props.difySetup ? {
-        natGatewayProvider: ec2.NatProvider.instanceV2({
-          instanceType: ec2.InstanceType.of(
-            ec2.InstanceClass.T4G,
-            ec2.InstanceSize.NANO
-          ),
-          associatePublicIpAddress: true,
-        }),
-        natGateways: 1,
-      } : {
-        natGateways: 0,
-      }),
+      ...(natConfig),
       restrictDefaultSecurityGroup: false,
     });
     cdk.Tags.of(this.vpc).add("Name", `s3asr-${props.name}VPC`);

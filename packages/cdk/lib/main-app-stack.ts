@@ -20,57 +20,43 @@ export class MainAppStack extends cdk.Stack {
     super(scope, id, props);
 
     // Create the API VPC with 2 AZs and explicit subnets
-    const apiVpc = new ApiVpcConstruct(this, 'ApiVpc', {
+    const apiVpc = new ApiVpcConstruct(this, "ApiVpc", {
       cidr: props.apiVpcCidr,
-      name: 'Api',
-      difySetup: props.difySetup
+      name: "Api",
+      difySetup: props.difySetup,
     });
 
     // debugMode が true の場合のみ、オンプレ相当のリソースを作成
     if (props.debugMode) {
       // Create the Onprem VPC with EC2 instance (1 AZ)
-      const onpremVpc = new OnpremVpcConstruct(this, 'OnpremVpc', {
+      const onpremVpc = new OnpremVpcConstruct(this, "OnpremVpc", {
         cidr: props.onpremiseCidr,
-        name: 'Onprem',
+        name: "Onprem",
       });
 
       // Create EC2 instance in the Onprem VPC
-      new Ec2Instance(this, 'OnpremEc2Instance', {
+      new Ec2Instance(this, "OnpremEc2Instance", {
         vpc: onpremVpc.vpc,
-        name: 'Onprem'
+        name: "Onprem",
       });
 
       // Create VPC Peering between Onprem VPC and API VPC
-      new VpcPeering(this, 'OnpremToApiVpcPeering', {
+      new VpcPeering(this, "OnpremToApiVpcPeering", {
         sourceVpc: onpremVpc.vpc,
         targetVpc: apiVpc.vpc,
-        sourceName: 'Onprem',
-        targetName: 'Api'
+        sourceName: "Onprem",
+        targetName: "Api",
       });
     }
-    
-    // Create S3 VPC Endpoint in API VPC
-    const s3Endpoint = new S3VpcEndpoint(this, 'ApiS3VpcEndpoint', {
-      vpc: apiVpc.vpc,
-      name: 'Api',
-      subnets: apiVpc.privateSubnets,
-      souceCidr: props.onpremiseCidr
-    });
-    
+
     // Create Transcribe VPC Endpoint in API VPC
-    new TranscribeVpcEndpoint(this, 'ApiTranscribeVpcEndpoint', {
+    new TranscribeVpcEndpoint(this, "ApiTranscribeVpcEndpoint", {
       vpc: apiVpc.vpc,
-      name: 'Api',
+      name: "Api",
       subnets: apiVpc.privateSubnets,
-      souceCidr: props.onpremiseCidr
+      souceCidr: props.onpremiseCidr,
     });
-    
-    // Create Transcribe Bucket
-    new S3Bucket(this, 'S3AsrBucket', {
-      bucketName: props.bucketName,
-      vpcEndpointId: s3Endpoint.endpoint.vpcEndpointId
-    });
-    
+
     // Create Route 53 Resolver Inbound Endpoint in API VPC
     new Route53ResolverEndpoint(this, "ApiRoute53InboundEndpoint", {
       vpc: apiVpc.vpc,
@@ -78,13 +64,27 @@ export class MainAppStack extends cdk.Stack {
       sourceCidr: props.onpremiseCidr,
       subnets: apiVpc.privateSubnets,
     });
-    
+
     // Create all necessary VPC endpoints for Dify deployment in API VPC
     new DifyVpcEndpoints(this, "ApiDifyVpcEndpoints", {
       vpc: apiVpc.vpc,
       name: "Api",
       subnets: apiVpc.privateSubnets,
-      debugMode: props.debugMode
+      debugMode: props.debugMode,
+    });
+
+    // Create S3 VPC Endpoint in API VPC
+    const s3Endpoint = new S3VpcEndpoint(this, "ApiS3VpcEndpoint", {
+      vpc: apiVpc.vpc,
+      name: "Api",
+      subnets: apiVpc.privateSubnets,
+      sourceCidr: props.onpremiseCidr,
+    });
+
+    // Create Transcribe Bucket
+    new S3Bucket(this, "S3AsrBucket", {
+      bucketName: props.bucketName,
+      vpcEndpointId: s3Endpoint.endpoint.vpcEndpointId,
     });
   }
 }
