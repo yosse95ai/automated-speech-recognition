@@ -18,11 +18,11 @@
 
 ```bash
 # 本リポジトリのみクローン
-git clone https://github.com/aws-samples/dify-self-hosted-on-aws.git
+git clone https://github.com/yosse95aiSandBox/s3asr.git
 
 # もしくは
 # Dify on AWS with CDK　のリポジトリも含めてクローン
-git clone --recurse-submodules https://github.com/aws-samples/dify-self-hosted-on-aws.git
+git clone --recurse-submodules https://github.com/yosse95aiSandBox/s3asr.git
 ```
 ## デプロイ方法
 
