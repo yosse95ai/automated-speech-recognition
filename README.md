@@ -22,7 +22,7 @@ git clone https://github.com/yosse95aiSandBox/s3asr.git
 
 # もしくは
 # Dify on AWS with CDK　のリポジトリも含めてクローン
-git clone --recurse https://github.com/yosse95aiSandBox/s3asr.git
+git clone --recursive https://github.com/yosse95aiSandBox/s3asr.git
 ```
 ## デプロイ方法
 
