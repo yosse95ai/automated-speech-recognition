@@ -77,7 +77,7 @@ export class Ec2Instance extends Construct {
     );
 
     // Read the transcribe.ps1 script content
-    const transcribeScriptPath = path.join(__dirname, "../../script", "transcribe.ps1");
+    const transcribeScriptPath = path.join(__dirname, "../../script/ps1", "transcribe.ps1");
     const transcribeScript = fs.readFileSync(transcribeScriptPath, "utf8");
 
     // Prepare user data to save transcribe.ps1 to the Administrator's home folder

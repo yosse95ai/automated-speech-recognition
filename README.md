@@ -1,34 +1,32 @@
 # s3asr w/ Dify Project
 
+## 構成図
+
+![architecture](doc/architecture.png)
+
+### 設定
 このCDKプロジェクトでは、以下のリソースを作成します：
 
-debugMode: false
+#### debugMode: `false`
 
 1. API VPC (Multi-AZ)：
    - プライベートサブネット: Dify　のリソースと Amazon Transcribe, AMazon S3　の VPC エンドポイントが立ちます。
    - パブリックサブネット: Dify 初回セットアップ用
 2. S3インターフェースVPCエンドポイント
-3. Dify セットアップ用のNATインスタンス (setup: true の場合)
+3. Dify セットアップ用のNATインスタンス (`difySetup: true` の場合)
 4. API VPC内のTranscribeインターフェースVPCエンドポイント
 5. VPCエンドポイント経由でのみアクセス可能なS3バケット（1日後に自動削除）
 6. DNS通信用のセキュリティグループ
 
-debugMode: true
+#### debugMode: `true`
 
+上記に追加で、以下が立ち上がります。
 1. プライベートサブネットのみを持つ2つのVPC：
    - OnpremVPC：Windows Serverインスタンスを含む（1つのAZ）
    - API VPC：将来のAPIリソース用（2つのAZ）
 2. OnpremVPCとAPI VPC間のVPCピアリング接続
 3. OnpremVPC内のプライベートサブネットにWindows Serverインスタンス
 4. EC2インスタンスコネクトエンドポイント（インスタンスへのRDP接続用）
-5. API VPC内のS3インターフェースVPCエンドポイント
-6. API VPC内のTranscribeインターフェースVPCエンドポイント
-7. VPCエンドポイント経由でのみアクセス可能なS3バケット（1日後に自動削除）
-8. DNS通信用のセキュリティグループ
-
-## 構成図
-
-![architecture](doc/architecture.png)
 
 ## デプロイ方法
 
@@ -41,11 +39,7 @@ npm run cdk:deploy
 ```
 
 ## デプロイ後に必要な手作業（オンプレ想定のEC2で検証する場合のみ）
-- S3 VPC EPのPrivate DNSを有効化する
-  - VPC > エンドポイント > Private DNS 名を変更画面
-    - 「このエンド本とで有効にする」にチェック
-    - 「インバウンドエンドポイントのためにのみプライベート DNS を有効にする」のチェックは外す
-    ![alt text](doc/private-dns.png)
+
 - Peeringごとのルートテーブルの設定
     - OnpremVPC：
     ![alt text](doc/rtb-onprem.png) 

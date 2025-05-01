@@ -33,15 +33,22 @@ export class S3VpcEndpoint extends Construct {
     );
 
     // Create an interface VPC endpoint for S3
-    this.endpoint = new ec2.InterfaceVpcEndpoint(this, `${props.name}S3Endpoint`, {
-      vpc: props.vpc,
-      service: ec2.InterfaceVpcEndpointAwsService.S3,
-      subnets: {
-        subnets: props.subnets,
-      },
-      securityGroups: [endpointSecurityGroup],
-      privateDnsEnabled: true,
-    });
+    this.endpoint = new ec2.InterfaceVpcEndpoint(
+      this,
+      `${props.name}S3Endpoint`,
+      {
+        vpc: props.vpc,
+        service: ec2.InterfaceVpcEndpointAwsService.S3,
+        subnets: {
+          subnets: props.subnets,
+        },
+        securityGroups: [endpointSecurityGroup],
+        privateDnsEnabled: true,
+        privateDnsOnlyForInboundResolverEndpoint:
+          ec2.VpcEndpointPrivateDnsOnlyForInboundResolverEndpoint
+            .ONLY_INBOUND_RESOLVER,
+      }
+    );
 
     cdk.Tags.of(this.endpoint).add('Name', `s3asr-${props.name}S3Endpoint`);
 
