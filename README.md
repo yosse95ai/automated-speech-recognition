@@ -2,15 +2,16 @@
 
 ![architecture](doc/architecture.png)
 
-> [!IMPORTANT]
+> [!Note]
 > `debugMode: false` の場合、API VPC のリソースのみ作成されます。
 > `difySetup: true` の場合のみ、NAT インスタンスが作成されます。
 
-> [!WARNING]
+> [!Important]
 > オンプレミスと接続する場合は、別途 Site-to-Site VPN などの設定をご自身で行なっていただく必要がございます。
 
 ## 前提条件
 - [Node.js](https://nodejs.org/en/download/) (v18 or newer)
+- [docker](https://docs.docker.com/get-docker/)
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and IAM profile with Administrator policy
 
 ## 準備
@@ -53,7 +54,7 @@ npm run cdk:deploy
 export const props: EnvironmentProps = {
   awsRegion: "ap-northeast-1", // s3asr の構築リージョン
   awsAccount: process.env.CDK_DEFAULT_ACCOUNT!,
-  bucketName: "s3-asr-bucket", // 音声書き起こし用の S3 Bucket
+  bucketName: "<your-bucket-name>", // 音声書き起こし用の S3 Bucket
   apiVpcCidr: "10.0.0.0/16", // 作成する API　VPC の CIDR
   onpremiseCidr: "10.128.0.0/16", // オンプレの CIDR
 
@@ -64,6 +65,9 @@ export const props: EnvironmentProps = {
   debugMode: true,
 };
 ```
+
+> [!Warning]
+> S3 バケットの名前は一意なものをつけてください。
 
 #### debugMode: `false` の場合：
 
@@ -95,7 +99,7 @@ export const props: EnvironmentProps = {
     - API VPC のルートテーブル 2 つ編集 (s3asr-Api-private-subnet-{1,2})
     ![alt text](doc/rtb-api.png)
 2. DHCPオプションセットを作成
-    - CDKで作成されたRoute 53 インバウンドエンドポイントのIPを新規のDHCPオプションを作成時、ドメインネームサーバーの部分に登録
+    - CDKで作成された[Route 53 インバウンドエンドポイントのIP](https://ap-northeast-1.console.aws.amazon.com/route53resolver/home?region=ap-northeast-1#/inbound-endpoints)を確認し、新規のDHCPオプションを作成時、ドメインネームサーバーの部分に登録
     ![alt text](doc/dhcp-op.png)
 3. OnpremVPC の DHCP オプションを作成したものに変更
     - 「VPC > VPCの設定を編集」からDHCP設定を変更

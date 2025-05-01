@@ -13,7 +13,7 @@ export const props: EnvironmentProps = {
   onpremiseCidr: "10.128.0.0/16",
 
   // true if you are deploying and/or setting up a dify package for the first time
-  difySetup: true,
+  difySetup: false,
 
   // for debug
   debugMode: true,
