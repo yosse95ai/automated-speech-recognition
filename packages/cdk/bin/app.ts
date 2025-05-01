@@ -6,7 +6,7 @@ import { MainAppStack } from '../lib/main-app-stack';
 import { EnvironmentProps } from "./environment";
 
 export const props: EnvironmentProps = {
-  awsRegion: "us-west-1",
+  awsRegion: "ap-northeast-1",
   awsAccount: process.env.CDK_DEFAULT_ACCOUNT!,
   bucketName: "s3-asr-bucket",
   apiVpcCidr: "10.0.0.0/16",
