@@ -1,3 +1,4 @@
 [submodule "dify-self-hosted-on-aws"]
 	path = dify-self-hosted-on-aws
 	url = https://github.com/aws-samples/dify-self-hosted-on-aws.git
+	branch = main
