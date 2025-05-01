@@ -129,21 +129,6 @@ const app = new cdk.App();
 // 以下略
 ```
 
-また、[dify-self-hosted-on-aws/lib/constructs/alb.ts](dify-self-hosted-on-aws/lib/constructs/alb.ts) を以下のように変更します。
-
-```ts
-// 上略
-    const alb = new ApplicationLoadBalancer(this, 'Resource', {
-      vpc,
-      vpcSubnets: vpc.selectSubnets({
-        subnets: internal ? vpc.privateSubnets.concat(vpc.isolatedSubnets) : vpc.publicSubnets,
-      }),
-      internetFacing: !internal,
-      idleTimeout: Duration.seconds(3000),　// ここを追記
-    });
-// 以下略
-```
-
 編集完了後、ディレクトリを移動して、以下のコマンドでデプロイを開始します。
 
 ```sh
