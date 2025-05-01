@@ -1,7 +1,5 @@
 # s3asr w/ Dify on AWS with CDK
 
-[_TOC_]
-
 ![architecture](doc/architecture.png)
 
 > [!IMPORTANT]
