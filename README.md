@@ -34,7 +34,10 @@ git clone --recursive https://github.com/yosse95aiSandBox/s3asr.git
 # 依存関係のインストール
 npm ci
 
-# TypeScriptのコンパイルとデプロイ
+# bootstrap the AWS account (required only once per account and region)
+npx cdk bootstrap
+
+# デプロイ
 npm run cdk:deploy
 ```
 
