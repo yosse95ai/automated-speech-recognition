@@ -35,15 +35,17 @@ git clone --recursive https://github.com/yosse95aiSandBox/s3asr.git
 npm ci
 
 # bootstrap the AWS account (required only once per account and region)
-npx cdk bootstrap
+npx -w packages/cdk cdk bootstrap
 
 # デプロイ
 npm run cdk:deploy
 ```
+デプロイ中にエラーが発生した場合は、[エラー対応](#エラー対応)を確認してください。
 
 デプロイが完了すると、[packages/cdk/output.json](packages/cdk/output.json) にデプロイの出力パラメータが保存されます。`ApiVpcApiVpcID**` のようなキーを持つパラメーターは、VPC ID (e.g. `vpc-xxxxxxx`) が記載され、Dify のデプロイ時に利用します。
 
 デプロイ完了後、[Dify on AWS with CDK](https://github.com/aws-samples/dify-self-hosted-on-aws) を [Dify のセットアップとデプロイ](#dify-のセットアップとデプロイ)に従ってデプロイします。
+
 
 ### 設定
 [packages/cdk/bin/app.ts](packages/cdk/bin/app.ts) を編集します。この設定により、デプロイされるリソースやその設定が決定します。
@@ -241,3 +243,20 @@ EC2 は完全閉域にデプロイされるため、インターネットへ接�
 - パスワード: 手順2で取得したパスワード
 
 接続後、ローカルから AWS CLI v2 をリモートにコピーして、インストールを行います。同梱している PS1 ファイルは AWS CLI v2 を利用する前提で、スクリプトが組まれています。
+
+## エラー対応
+### EC2 Instance (NAT Instance) のデプロイに失敗した場合
+AWS アカウントによっては、Validation エラーが発生する場合があります。お手数ですが、1度スタックを全て削除してから数分間隔を空けてデプロイを際実行してください。
+
+```
+14:55:32 | CREATE_FAILED        | AWS::EC2::Instance                     | ApiVpcApiVPCapipub...atInstanceD7D61BFE
+Resource handler returned message: "Your request for accessing resources in this region is being validated, and you will not be able to launch add
+itional resources in this region until the validation is complete. We will notify you by email once your request has been validated. While normall
+y resolved within minutes, please allow up to 4 hours for this process to complete. If the issue still persists, then open a support case.
+[https://support.console.aws.amazon.com/support/home?region=us-east-1#/case/create?issueType=customer-service&serviceCode=account-management&categ
+oryCode=account-verification] (Service: Ec2, Status Code: 400, Request ID: 1afaae05-99a3-4c7f-83f8-da3aeec73ed2) (SDK Attempt Count: 2)" (RequestT
+oken: aef78f85-5dea-3c42-7d9b-bcfa46247bd0, HandlerErrorCode: InvalidRequest)
+```
+
+## ライセンス
+このプロジェクトは MIT-0 ライセンスの下で公開されています。詳細は [LICENSE](./LICENSE) ファイルをご覧ください。
