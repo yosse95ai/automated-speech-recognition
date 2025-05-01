@@ -6,12 +6,12 @@ import { MainAppStack } from '../lib/main-app-stack';
 import { EnvironmentProps } from "./environment";
 
 export const props: EnvironmentProps = {
-  awsRegion: "us-west-2",
+  awsRegion: "ap-northeast-1",
   awsAccount: process.env.CDK_DEFAULT_ACCOUNT!,
   bucketName: "s3-asr-bucket",
   apiVpcCidr: "10.0.0.0/16",
   onpremiseCidr: "10.128.0.0/16",
-  
+
   // true if you are deploying and/or setting up a dify package for the first time
   difySetup: true,
 
