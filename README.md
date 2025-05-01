@@ -151,7 +151,7 @@ const app = new cdk.App();
 ```sh
 pushd dify-self-hosted-on-aws/
 npm ci
-yes | npx cdk deploy --all
+npx cdk deploy --all
 popd
 ```
 
