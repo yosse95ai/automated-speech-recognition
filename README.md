@@ -176,13 +176,13 @@ sh ./transcribe.sh \
 実行の流れは以下の通りである。
 ```mermaid
 sequenceDiagram
-    participant BizRobo!
+    participant Local
     participant PowerShell
     participant S3 as AWS S3
     participant Transcribe as AWS Transcribe
     participant LocalFS as Local File System
 
-    BizRobo!->>PowerShell: Execute transcribe.ps1 with parameters<br>(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, REGION, FILE_PATH)
+    Local->>PowerShell: Execute transcribe.ps1 with parameters<br>(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, REGION, FILE_PATH)
     PowerShell->>PowerShell: Set AWS credentials as environment variables
     
     PowerShell->>S3: Upload audio file to S3<br>aws s3 cp $FILE_PATH $S3_PATH
@@ -210,7 +210,7 @@ sequenceDiagram
     PowerShell->>LocalFS: Save transcript text to .txt file
     
     PowerShell->>PowerShell: Remove temporary JSON file
-    PowerShell->>BizRobo!: Display transcript content
+    PowerShell->>Local: Display transcript content
 ```
 
 ## デバッグモード
