@@ -1,4 +1,4 @@
-# s3asr w/ Dify on AWS with CDK
+# Automated Speech Recognition w/ Dify on AWS with CDK
 
 ![architecture](doc/architecture.png)
 
@@ -43,7 +43,7 @@ npm run cdk:deploy
 ```
 デプロイ中にエラーが発生した場合は、[エラー対応](#エラー対応)を確認してください。
 
-デプロイが完了すると、[packages/cdk/output.json](packages/cdk/output.json) にデプロイの出力パラメータが保存されます。`ApiVpcApiVpcID**` のようなキーを持つパラメーターは、VPC ID (e.g. `vpc-xxxxxxx`) が記載され、Dify のデプロイ時に利用します。
+デプロイが完了すると、[packages/cdk/output.json](packages/cdk/output.json) にデプロイの出力パラメータが保存されます。`ApiVpcApiVpcID**` のようなキーを持つパラメーターは、VPC ID (e.g. `vpc-xxxxxxx`) が記載され、Dify のデプロイ時に利用します。各リソースは基本的に、`s3asr` という prefix が付与されています。
 
 デプロイ完了後、[Dify on AWS with CDK](https://github.com/aws-samples/dify-self-hosted-on-aws) を [Dify のセットアップとデプロイ](#dify-のセットアップとデプロイ)に従ってデプロイします。
 
