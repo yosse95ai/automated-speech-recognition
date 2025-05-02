@@ -216,7 +216,7 @@ sequenceDiagram
 ## デバッグモード
 以降の手順は、`debugMode: true` の場合の、検証方法です。
 
-### Windows Serverインスタンスへの接続方法
+### Windows Serverインスタンスへの RDP トンネル確立
 
 デプロイ後、以下の手順で Windows Server インスタンスに接続できます：
 
@@ -237,7 +237,9 @@ sequenceDiagram
     npm run debug:rdp
     ```
 
-### 4. RDPクライアントで接続
+### RDPクライアントで接続
+
+Windows Apps などを利用して接続できます。
 
 EC2 は完全閉域にデプロイされるため、インターネットへ接続できません。そのため、事前にローカルへ AWS CLI v2 ダウンロードしておき、ローカルのフォルダをリモート先にマウントし、参照できるようにします。これにより、インターネットに接続できない EC2 に[AWS CLI v2 for Windows の msi](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/getting-started-install.html) をダウンロードします。（ローカルからコピー）
 
