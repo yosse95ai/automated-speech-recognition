@@ -19,11 +19,11 @@
 
 ```bash
 # 本リポジトリのみクローン
-git clone https://github.com/yosse95aiSandBox/s3asr.git
+git clone https://github.com/yosse95ai/automated-speech-recognition.git
 
 # もしくは
 # Dify on AWS with CDK　のリポジトリも含めてクローン
-git clone --recurse-submodules https://github.com/yosse95aiSandBox/s3asr.git
+git clone --recurse-submodules https://github.com/yosse95ai/automated-speech-recognition.git
 ```
 ## デプロイ方法
 
