@@ -113,8 +113,7 @@ export const props: EnvironmentProps = {
 ```ts
 // 上略
 export const props: EnvironmentProps = {
-  // s3asr プロジェクトをデプロイしたのと同じリージョンに変更
-  awsRegion: 'ap-northeast-1',
+  awsRegion: 'ap-northeast-1', // 本プロジェクトをデプロイしたのと同じリージョンに変更
   awsAccount: process.env.CDK_DEFAULT_ACCOUNT!,
   // Set Dify version
   difyImageTag: '1.1.3',
