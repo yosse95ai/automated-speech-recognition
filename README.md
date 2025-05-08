@@ -72,7 +72,7 @@ export const props: EnvironmentProps = {
 #### debugMode: `false` の場合：
 
 1. API VPC (Multi-AZ)：
-   - プライベートサブネット: Dify　のリソースと Amazon Transcribe, AMazon S3　の VPC エンドポイントが立ちます。
+   - プライベートサブネット: Dify　のリソースと Amazon Transcribe, Amazon S3 の VPC エンドポイントが立ちます。
    - パブリックサブネット: Dify 初回セットアップ用
 2. S3インターフェースVPCエンドポイント
 3. VPCエンドポイント経由でのみアクセス可能なS3バケット（オブジェクトは1日後に自動削除）
@@ -84,9 +84,7 @@ export const props: EnvironmentProps = {
 #### debugMode: `true` の場合：
 
 上記に追加で、以下が立ち上がります。
-1. プライベートサブネットのみを持つ2つのVPC：
-   - OnpremVPC：Windows Serverインスタンスを含む（1つのAZ）
-   - API VPC：将来のAPIリソース用（2つのAZ）
+1. OnpremVPC：Private サブネットに Windows Serverインスタンスを含む（1つのAZ）
 2. OnpremVPCとAPI VPC間のVPCピアリング接続
 3. OnpremVPC内のプライベートサブネットにWindows Serverインスタンス
 4. EC2インスタンスコネクトエンドポイント（インスタンスへのRDP接続用）
