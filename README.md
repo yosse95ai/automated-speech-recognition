@@ -224,13 +224,11 @@ sequenceDiagram
 
 2. Windowsパスワードの取得
     ```bash
-    # CDK出力に表示されるコマンドを実行（例）
     npm run debug:pw
     ```
 
 3. RDPトンネルの確立
     ```bash
-    # CDK出力に表示されるコマンドを実行（例）
     npm run debug:rdp
     ```
 
