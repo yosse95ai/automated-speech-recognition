@@ -151,6 +151,10 @@ popd
 - AmazonS3FullAccess
 - AmazonTranscribeFullAccess
 ### Windows (PowerShell)
+`nslookup s3.ap-northeast-1.amazonaws.com` コマンドで疎通確認を行い、名前解決の結果で S3 の VPC エンドポイントの IP が返却されることを確認します。
+
+![alt text](doc/nslookup.png)
+
 [transcribe.ps1](./packages/cdk/lib/transcribe.ps1) の実行コマンドは以下になる。
 ```powershell
 powershell .\transcribe.ps1 `
@@ -158,6 +162,7 @@ powershell .\transcribe.ps1 `
     -AWS_SECRET_ACCESS_KEY <シークレットキー> `
     -REGION ap-northeast-1 `
     -FILE_PATH <ローカルの音声ファイルのパス>
+    -S3 <S3バケット名>
 ```
 
 ### Linux (シェルスクリプト)
@@ -179,7 +184,7 @@ sequenceDiagram
     participant Transcribe as AWS Transcribe
     participant LocalFS as Local File System
 
-    Local->>PowerShell: Execute transcribe.ps1 with parameters<br>(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, REGION, FILE_PATH)
+    Local->>PowerShell: Execute transcribe.ps1 with parameters<br>(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, REGION, FILE_PATH, S3)
     PowerShell->>PowerShell: Set AWS credentials as environment variables
     
     PowerShell->>S3: Upload audio file to S3<br>aws s3 cp $FILE_PATH $S3_PATH
@@ -257,6 +262,30 @@ y resolved within minutes, please allow up to 4 hours for this process to comple
 [https://support.console.aws.amazon.com/support/home?region=us-east-1#/case/create?issueType=customer-service&serviceCode=account-management&categ
 oryCode=account-verification] (Service: Ec2, Status Code: 400, Request ID: 1afaae05-99a3-4c7f-83f8-da3aeec73ed2) (SDK Attempt Count: 2)" (RequestT
 oken: aef78f85-5dea-3c42-7d9b-bcfa46247bd0, HandlerErrorCode: InvalidRequest)
+```
+
+## 閉域網の S3 へのアップロードがタイムアウトになる
+閉域を想定している場合、S3へアクセスする端末から、S3 の名前解決結果が VPC エンドポイントになっていること確認してください。[# Windows (PowerShell)>>](#windows-powershell)
+
+名前解決結果としてグローバル IP が返却されている可能性があります。以下のようなグローバル IP が返却される場合は、名前解決の設定をご確認ください。
+
+(※デバッグモードの場合 DHCP オプションの反映まで数分かかります。)
+
+```
+> nslookup s3.ap-northeast-1.amazonaws.com
+
+サーバー:  ip-10-128-0-2.ap-northeast-1.compute.internal
+Address:  10.128.0.2
+
+名前:    s3.ap-northeast-1.amazonaws.com
+Addresses:  3.5.156.34
+	  52.219.136.240
+	  3.5.158.89
+	  52.219.172.0
+	  52.219.162.48
+	  3.5.158.16
+	  52.219.162.108
+	  52.219.151.116 
 ```
 
 ## ライセンス
