@@ -1,14 +1,12 @@
-﻿Param($FILE_PATH)
+﻿Param($AWS_ACCESS_KEY_ID, $AWS_SECRET_ACCESS_KEY, $REGION, $FILE_PATH, $S3)
 
 function CallTranscribe($filepath) {
-    $AWS_ACCESS_KEY_ID = "your-access-key"
-    $AWS_SECRET_ACCESS_KEY = "your-secret-access-key"
-    $AWS_DEFAULT_REGION = "ap-northeast-1"
     $output = powershell .\transcribe.ps1  `
-        -AWS_ACCESS_KEY_ID  $AWS_ACCESS_KEY_ID `
+        -AWS_ACCESS_KEY_ID $AWS_ACCESS_KEY_ID `
         -AWS_SECRET_ACCESS_KEY $AWS_SECRET_ACCESS_KEY `
-        -REGION $AWS_DEFAULT_REGION `
-        -FILE_PATH $filepath
+        -REGION $REGION `
+        -FILE_PATH $filepath `
+        -S3 $S3
 
     return($output)
 }

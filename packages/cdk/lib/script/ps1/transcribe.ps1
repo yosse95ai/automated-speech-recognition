@@ -3,7 +3,8 @@
 # -AWS_SECRET_ACCESS_KEY : AWS Secret Key
 # -REGION                : AWS Region
 # -FILE_PATH             : Path to input audio file
-Param($AWS_ACCESS_KEY_ID, $AWS_SECRET_ACCESS_KEY, $REGION, $FILE_PATH)
+# -S3                    : Amazon S3 bucket name
+Param($AWS_ACCESS_KEY_ID, $AWS_SECRET_ACCESS_KEY, $REGION, $FILE_PATH, $S3)
 
 # Register AWS credentials
 $env:AWS_ACCESS_KEY_ID = "$AWS_ACCESS_KEY_ID"
@@ -11,7 +12,7 @@ $env:AWS_SECRET_ACCESS_KEY = "$AWS_SECRET_ACCESS_KEY"
 $env:AWS_DEFAULT_REGION = "$REGION"
 
 # Upload audio file to S3
-$BUCKET_NAME="s3-asr-bucket"
+$BUCKET_NAME= "$S3"
 $FILENAME = [System.IO.Path]::GetFileName($FILE_PATH)
 $S3_PATH = "s3://$BUCKET_NAME/Audio/$FILENAME"
 
