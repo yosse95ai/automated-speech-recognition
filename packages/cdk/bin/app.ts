@@ -8,7 +8,7 @@ import { EnvironmentProps } from "./environment";
 export const props: EnvironmentProps = {
   awsRegion: "ap-northeast-1",
   awsAccount: process.env.CDK_DEFAULT_ACCOUNT!,
-  bucketName: "s3-asr-bucket",
+  bucketName: "s3-asr-bucket2",
   apiVpcCidr: "10.0.0.0/16",
   onpremiseCidr: "10.128.0.0/16",
 

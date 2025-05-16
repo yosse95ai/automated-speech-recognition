@@ -1,6 +1,5 @@
-Param($TEXT)
+Param($TEXT, $API_KEY)
 
-$API_KEY = "your-workflow-api-key"
 $BASE_URL = "your-dify-domain/v1"
 
 $json = @{
