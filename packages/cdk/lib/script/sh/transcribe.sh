@@ -10,10 +10,10 @@
 #     --aws-access-key-id <key> \
 #     --aws-secret-access-key <secret> \
 #     --region <region> \
-#     --file-path <path>
+#     --file-path <path> \
+#     --s3 <bucket-name>
 
 # 定数
-BUCKET_NAME="s3-asr-bucket" # バケット名（必要に応じて変更）
 LANGUAGE_CODE="ja-JP"       # 言語コード
 
 # エラーが発生したら即座に終了
@@ -44,7 +44,7 @@ parse_arguments() {
                 FILE_PATH="$2"
                 shift 2
                 ;;
-            -f|--s3)
+            -b|--s3)
                 S3="$2"
                 shift 2
                 ;;
@@ -90,7 +90,7 @@ upload_to_s3() {
     local file_path="$1"
     local filename
     filename=$(basename "$file_path")
-    local s3_path="s3://$BUCKET_NAME/Audio/$filename"
+    local s3_path="s3://$S3/Audio/$filename"
 
     if ! aws s3 cp "$file_path" "$s3_path" > /dev/null; then
         log_error "S3 へのアップロードに失敗しました"
@@ -112,7 +112,7 @@ start_transcribe_job() {
         --transcription-job-name "$jobname" \
         --media "MediaFileUri=$s3_path" \
         --language-code "$LANGUAGE_CODE" \
-        --output-bucket-name "$BUCKET_NAME" > /dev/null; then
+        --output-bucket-name "$S3" > /dev/null; then
         log_error "Transcribe ジョブの開始に失敗しました"
         exit 1
     fi
@@ -168,7 +168,7 @@ process_transcription_result() {
     
     # S3 から JSON ファイルをダウンロード
     if ! aws s3api get-object \
-        --bucket "$BUCKET_NAME" \
+        --bucket "$S3" \
         --key "$transcript_json_file" \
         "$temp_json_file" > /dev/null; then
         log_error "文字起こし結果のダウンロードに失敗しました"

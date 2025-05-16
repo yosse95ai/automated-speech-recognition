@@ -1,6 +1,6 @@
 Param($TEXT, $API_KEY)
 
-$BASE_URL = "your-dify-domain/v1"
+$BASE_URL = "https://your-dify-domain/v1"
 
 $json = @{
     inputs=@{
