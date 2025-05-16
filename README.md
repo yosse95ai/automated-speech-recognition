@@ -118,12 +118,6 @@ export const props: EnvironmentProps = {
   // Set plugin-daemon version to stable release
   difyPluginDaemonImageTag: '0.0.6-local',
 
-  // uncomment the below options for less expensive configuration:
-  // isRedisMultiAz: false,
-  // useNatInstance: true,
-  // enableAuroraScalesToZero: true,
-  // useFargateSpot: true,
-
   // 以下を追記します。
   useCloudFront: false,
   internalAlb: true,
@@ -155,24 +149,25 @@ popd
 
 ![alt text](doc/nslookup.png)
 
-[transcribe.ps1](./packages/cdk/lib/transcribe.ps1) の実行コマンドは以下になる。
+[transcribe.ps1](./packages/cdk/lib/script/ps1/transcribe.ps1) の実行コマンドは以下になる。
 ```powershell
 powershell .\transcribe.ps1 `
     -AWS_ACCESS_KEY_ID <アクセスキー> `
     -AWS_SECRET_ACCESS_KEY <シークレットキー> `
-    -REGION ap-northeast-1 `
+    -REGION <リージョン>  `
     -FILE_PATH <ローカルの音声ファイルのパス>
     -S3 <S3バケット名>
 ```
 
 ### Linux (シェルスクリプト)
-[transcribe.sh](./packages/cdk/lib/transcribe.sh) の実行コマンドは以下になる。
+[transcribe.sh](./packages/cdk/lib/script/sh/transcribe.sh) の実行コマンドは以下になる。
 ```bash
 sh ./transcribe.sh \
-    --aws-access-key-id <key> \
-    --aws-secret-access-key <secret> \
-    --region <region> \
-    --file-path <path>
+    --aws-access-key-id <アクセスキー> \
+    --aws-secret-access-key <シークレットキー> \
+    --region <リージョン> \
+    --file-path <ローカルの音声ファイルのパス> \
+    --s3 <s3バケット名>
 ```
 
 実行の流れは以下の通りである。
@@ -213,6 +208,40 @@ sequenceDiagram
     
     PowerShell->>PowerShell: Remove temporary JSON file
     PowerShell->>Local: Display transcript content
+```
+
+## 音声書き起こしを Dify を用いて処理
+Dify ワークフローがあり、APIキー発行済みであることを前提としています。
+
+> [!Warning]
+> Dify チャットフローの場合は、dify.ps1, dify.sh のソースコードをそれぞれ修正する必要があります。
+
+### PowerShell の場合：
+- `packages/cdk/lib/script/ps1/dify.ps1` の `BASE_URL` を編集して、`packages/cdk/lib/script/ps1/main.ps1` を実行することで、音声書き起こし結果をご自身のワークフローへ流し込むことができます。
+
+```powershell
+# 実行方法
+powershell .\main.ps1 `
+    -AWS_ACCESS_KEY_ID <アクセスキー> `
+    -AWS_SECRET_ACCESS_KEY <シークレットキー> `
+    -REGION <リージョン>`
+    -FILE_PATH <ローカルの音声ファイルのパス>
+    -S3 <S3バケット名>
+    -DIFY_API_KEY <Dify ワークフローのAPIキー>
+```
+
+### Shell Script の場合：
+- `packages/cdk/lib/script/sh/dify.sh` の `BASE_URL` を編集して、`packages/cdk/lib/script/sh/main.sh` を実行することで、音声書き起こし結果をご自身のワークフローへ流し込むことができます。
+
+```bash
+# 実行方法
+sh ./main.sh \
+    --aws-access-key-id <アクセスキー> \
+    --aws-secret-access-key <シークレットキー> \
+    --region <リージョン> \
+    --file-path <ローカルの音声ファイルのパス> \
+    --s3 <S3バケット名>
+    --dify-api-key <Dify ワークフローのAPIキー>
 ```
 
 ## デバッグモード
