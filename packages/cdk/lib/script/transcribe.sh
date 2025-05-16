@@ -44,6 +44,10 @@ parse_arguments() {
                 FILE_PATH="$2"
                 shift 2
                 ;;
+            -f|--s3)
+                S3="$2"
+                shift 2
+                ;;
             *)
                 log_error "不明なオプション: $1"
                 exit 1
@@ -60,10 +64,11 @@ validate_input() {
     [[ -z "$AWS_SECRET_ACCESS_KEY" ]] && missing_params+=("--aws-secret-access-key")
     [[ -z "$REGION" ]] && missing_params+=("--region")
     [[ -z "$FILE_PATH" ]] && missing_params+=("--file-path")
+    [[ -z "$S3" ]] && missing_params+=("--s3")
 
     if [[ ${#missing_params[@]} -ne 0 ]]; then
         log_error "必須パラメータが不足しています: ${missing_params[*]}"
-        echo "使用方法: $0 --aws-access-key-id <key> --aws-secret-access-key <secret> --region <region> --file-path <path>"
+        echo "使用方法: $0 --aws-access-key-id <key> --aws-secret-access-key <secret> --region <region> --file-path <path> --s3 <bucket-name>"
         exit 1
     fi
 
