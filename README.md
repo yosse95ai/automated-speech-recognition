@@ -114,9 +114,9 @@ export const props: EnvironmentProps = {
   awsRegion: 'ap-northeast-1', // 本プロジェクトをデプロイしたのと同じリージョンに変更
   awsAccount: process.env.CDK_DEFAULT_ACCOUNT!,
   // Set Dify version
-  difyImageTag: '1.1.3',
+  difyImageTag: '1.3.1',
   // Set plugin-daemon version to stable release
-  difyPluginDaemonImageTag: '0.0.6-local',
+  difyPluginDaemonImageTag: '0.0.9-local',
 
   // 以下を追記します。
   useCloudFront: false,
@@ -217,7 +217,7 @@ Dify ワークフローがあり、APIキー発行済みであることを前提
 > Dify チャットフローの場合は、dify.ps1, dify.sh のソースコードをそれぞれ修正する必要があります。
 
 ### PowerShell の場合：
-- `packages/cdk/lib/script/ps1/dify.ps1` の `BASE_URL` を編集して、`packages/cdk/lib/script/ps1/main.ps1` を実行することで、音声書き起こし結果をご自身のワークフローへ流し込むことができます。
+`packages/cdk/lib/script/ps1/dify.ps1` の `BASE_URL` を編集して、`packages/cdk/lib/script/ps1/main.ps1` を実行することで、音声書き起こし結果をご自身のワークフローへ流し込むことができます。
 
 ```powershell
 # 実行方法
@@ -231,9 +231,10 @@ powershell .\main.ps1 `
 ```
 
 ### Shell Script の場合：
-- `packages/cdk/lib/script/sh/dify.sh` の `BASE_URL` を編集して、`packages/cdk/lib/script/sh/main.sh` を実行することで、音声書き起こし結果をご自身のワークフローへ流し込むことができます。
+`packages/cdk/lib/script/sh/dify.sh` の `BASE_URL` を編集して、`packages/cdk/lib/script/sh/main.sh` を実行することで、音声書き起こし結果をご自身のワークフローへ流し込むことができます。
 
 ```bash
+# 事前にファイルに実行権限を与えておく必要がございます。
 # 実行方法
 sh ./main.sh \
     --aws-access-key-id <アクセスキー> \
