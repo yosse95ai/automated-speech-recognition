@@ -25,10 +25,52 @@ git clone https://github.com/yosse95ai/automated-speech-recognition.git
 # Dify on AWS with CDK　のリポジトリも含めてクローン
 git clone --recurse-submodules https://github.com/yosse95ai/automated-speech-recognition.git
 ```
+
 ## デプロイ方法
 
 このCDKプロジェクトでは、[packages/bin/app.ts](./packages/cdk/bin/app.ts) のパラメータ設定により、立ち上げるリソースを変更することができます。詳しくは[設定](#設定)を確認ください。
 
+### 設定
+[packages/cdk/bin/app.ts](packages/cdk/bin/app.ts) を編集します。この設定により、デプロイされるリソースやその設定が決定します。
+```ts
+export const props: EnvironmentProps = {
+  awsRegion: "ap-northeast-1", // s3asr の構築リージョン
+  awsAccount: process.env.CDK_DEFAULT_ACCOUNT!,
+  bucketName: "<your-bucket-name>", // オンプレから直接 S3 を呼び出したい場合の指定バケット
+  apiVpcCidr: "10.0.0.0/16", // 作成する API　VPC の CIDR
+  onpremiseCidr: "10.128.0.0/16", // オンプレの CIDR
+
+  // true if you are deploying and/or setting up a dify package for the first time
+  difySetup: false,
+
+  // for debug
+  debugMode: false,
+
+  // usecase options
+  useTranscribe: false, // 音声書き起こしで Transcribe を利用する場合 (true)
+  useBedrockAgents: false, // Bedrock Agents を利用する場合 (true)
+  useS3OnpremDirectly: false, // オンプレから直接 S3 を呼び出したい場合 (true)
+};
+```
+
+> [!Warning]
+> S3 バケットの名前は一意なものをつけてください。
+
+#### debugMode: `false` の場合：
+以下のリソースが立ち上がります。
+
+1. API VPC (Multi-AZ)：
+   - プライベートサブネット: Dify　のリソースと Amazon Transcribe, Amazon S3 の VPC エンドポイントが立ちます。
+   - パブリックサブネット: Dify 初回セットアップ用
+4. API VPC内のTranscribeインターフェースVPCエンドポイント
+5. Dify セットアップ用のNATインスタンス (`difySetup: true` の場合)
+   - セットアップ完了後に `false` にすることでNATインスタンスを消去可能
+6. DNS通信用のセキュリティグループ
+
+#### debugMode: `true` の場合：
+オンプレミス想定の Windows EC2 から 閉域の Dify の動作確認するためのセットアップ方法はこちらをご覧ください。([Windows EC2 インスタンスでデバッグをする方法](doc/WindowsEC2.md))
+
+### デプロイ
 設定完了後、以下のコマンドでデプロイします。
 
 ```bash
@@ -48,61 +90,6 @@ npm run cdk:deploy
 デプロイ完了後、[Dify on AWS with CDK](https://github.com/aws-samples/dify-self-hosted-on-aws) を [Dify のセットアップとデプロイ](#dify-のセットアップとデプロイ)に従ってデプロイします。
 
 
-### 設定
-[packages/cdk/bin/app.ts](packages/cdk/bin/app.ts) を編集します。この設定により、デプロイされるリソースやその設定が決定します。
-```ts
-export const props: EnvironmentProps = {
-  awsRegion: "ap-northeast-1", // s3asr の構築リージョン
-  awsAccount: process.env.CDK_DEFAULT_ACCOUNT!,
-  bucketName: "<your-bucket-name>", // 音声書き起こし用の S3 Bucket
-  apiVpcCidr: "10.0.0.0/16", // 作成する API　VPC の CIDR
-  onpremiseCidr: "10.128.0.0/16", // オンプレの CIDR
-
-  // true if you are deploying and/or setting up a dify package for the first time
-  difySetup: true,
-
-  // for debug
-  debugMode: true,
-};
-```
-
-> [!Warning]
-> S3 バケットの名前は一意なものをつけてください。
-
-#### debugMode: `false` の場合：
-
-1. API VPC (Multi-AZ)：
-   - プライベートサブネット: Dify　のリソースと Amazon Transcribe, Amazon S3 の VPC エンドポイントが立ちます。
-   - パブリックサブネット: Dify 初回セットアップ用
-2. S3インターフェースVPCエンドポイント
-3. VPCエンドポイント経由でのみアクセス可能なS3バケット（オブジェクトは1日後に自動削除）
-4. API VPC内のTranscribeインターフェースVPCエンドポイント
-5. Dify セットアップ用のNATインスタンス (`difySetup: true` の場合)
-   - セットアップ完了後に `false` にすることでNATインスタンスを消去可能
-6. DNS通信用のセキュリティグループ
-
-#### debugMode: `true` の場合：
-
-上記に追加で、以下が立ち上がります。
-1. OnpremVPC：Private サブネットに Windows Serverインスタンスを含む（1つのAZ）
-2. OnpremVPCとAPI VPC間のVPCピアリング接続
-3. OnpremVPC内のプライベートサブネットにWindows Serverインスタンス
-4. EC2インスタンスコネクトエンドポイント（インスタンスへのRDP接続用）
-
-このモードではデプロイ後に以下を行う必要があります。以下のセットアップをマネジメントコンソール上で行うことにより、検証用 EC2 (Windows Server) から S3 や Transcribe、Dify への VPC を跨いだ通信ができるようになります。
-
-1. Peeringごとのルートテーブルの設定
-    - OnpremVPC のルートテーブル 1 つ編集 (s3asr-Onprem-private-subnet-1)
-    ![alt text](doc/rtb-onprem.png) 
-    - API VPC のルートテーブル 2 つ編集 (s3asr-Api-private-subnet-{1,2})
-    ![alt text](doc/rtb-api.png)
-2. DHCPオプションセットを作成
-    - CDKで作成された[Route 53 インバウンドエンドポイントのIP](https://ap-northeast-1.console.aws.amazon.com/route53resolver/home?region=ap-northeast-1#/inbound-endpoints)を確認し、新規のDHCPオプションを作成時、ドメインネームサーバーの部分に登録
-    ![alt text](doc/dhcp-op.png)
-3. OnpremVPC の DHCP オプションを作成したものに変更
-    - 「VPC > VPCの設定を編集」からDHCP設定を変更
-    ![alt text](doc/dhcp.png)
-
 ### Dify のセットアップとデプロイ
 [Dify on AWS with CDK](https://github.com/aws-samples/dify-self-hosted-on-aws) リポジトリをご自身、もしくは[準備](#準備)手順に従いクローンしておきます。
 
@@ -114,9 +101,9 @@ export const props: EnvironmentProps = {
   awsRegion: 'ap-northeast-1', // 本プロジェクトをデプロイしたのと同じリージョンに変更
   awsAccount: process.env.CDK_DEFAULT_ACCOUNT!,
   // Set Dify version
-  difyImageTag: '1.3.1',
+  difyImageTag: '1.4.3',
   // Set plugin-daemon version to stable release
-  difyPluginDaemonImageTag: '0.0.9-local',
+  difyPluginDaemonImageTag: '0.1.2-local',
 
   // 以下を追記します。
   useCloudFront: false,
@@ -140,145 +127,6 @@ popd
 
 詳しい閉域 Dify のデプロイ方法は、[dify-self-hosted-on-aws #Deploying to a closed network (a.k.a 閉域要件)](https://github.com/aws-samples/dify-self-hosted-on-aws?tab=readme-ov-file#deploying-to-a-closed-network-aka-%E9%96%89%E5%9F%9F%E8%A6%81%E4%BB%B6) をご確認ください。
 
-## 文字起こしの開始方法
-事前に、以下の権限を持つ [IAM ユーザーを作成](https://us-east-1.console.aws.amazon.com/iam/home?region=us-west-2#/users)し、シークレット情報を控えておく必要があります。
-- AmazonS3FullAccess
-- AmazonTranscribeFullAccess
-### Windows (PowerShell)
-`nslookup s3.ap-northeast-1.amazonaws.com` コマンドで疎通確認を行い、名前解決の結果で S3 の VPC エンドポイントの IP が返却されることを確認します。
-
-![alt text](doc/nslookup.png)
-
-[transcribe.ps1](./packages/cdk/lib/script/ps1/transcribe.ps1) の実行コマンドは以下になる。
-```powershell
-powershell .\transcribe.ps1 `
-    -AWS_ACCESS_KEY_ID <アクセスキー> `
-    -AWS_SECRET_ACCESS_KEY <シークレットキー> `
-    -REGION <リージョン>  `
-    -FILE_PATH <ローカルの音声ファイルのパス>
-    -S3 <S3バケット名>
-```
-
-### Linux (シェルスクリプト)
-[transcribe.sh](./packages/cdk/lib/script/sh/transcribe.sh) の実行コマンドは以下になる。
-```bash
-sh ./transcribe.sh \
-    --aws-access-key-id <アクセスキー> \
-    --aws-secret-access-key <シークレットキー> \
-    --region <リージョン> \
-    --file-path <ローカルの音声ファイルのパス> \
-    --s3 <s3バケット名>
-```
-
-実行の流れは以下の通りである。
-```mermaid
-sequenceDiagram
-    participant Local
-    participant PowerShell
-    participant S3 as AWS S3
-    participant Transcribe as AWS Transcribe
-    participant LocalFS as Local File System
-
-    Local->>PowerShell: Execute transcribe.ps1 with parameters<br>(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, REGION, FILE_PATH, S3)
-    PowerShell->>PowerShell: Set AWS credentials as environment variables
-    
-    PowerShell->>S3: Upload audio file to S3<br>aws s3 cp $FILE_PATH $S3_PATH
-    S3-->>PowerShell: Upload confirmation
-    
-    PowerShell->>Transcribe: Start transcription job<br>aws transcribe start-transcription-job
-    Transcribe-->>PowerShell: Job initiated
-    
-    loop Check job status
-        PowerShell->>Transcribe: Get job status<br>aws transcribe get-transcription-job
-        Transcribe-->>PowerShell: Return status (IN_PROGRESS)
-        PowerShell->>PowerShell: Sleep 10 seconds
-    end
-    
-    PowerShell->>Transcribe: Get job status<br>aws transcribe get-transcription-job
-    Transcribe-->>PowerShell: Return status (COMPLETED)
-    
-    PowerShell->>Transcribe: Get job details<br>aws transcribe get-transcription-job
-    Transcribe-->>PowerShell: Return job details with transcript URI
-    
-    PowerShell->>S3: Download transcript JSON<br>aws s3api get-object
-    S3-->>PowerShell: Return JSON file
-    
-    PowerShell->>PowerShell: Extract transcript text from JSON
-    PowerShell->>LocalFS: Save transcript text to .txt file
-    
-    PowerShell->>PowerShell: Remove temporary JSON file
-    PowerShell->>Local: Display transcript content
-```
-
-## 音声書き起こしを Dify を用いて処理
-Dify ワークフローがあり、APIキー発行済みであることを前提としています。
-
-> [!Warning]
-> Dify チャットフローの場合は、dify.ps1, dify.sh のソースコードをそれぞれ修正する必要があります。
-
-### PowerShell の場合：
-`packages/cdk/lib/script/ps1/dify.ps1` の `BASE_URL` を編集して、`packages/cdk/lib/script/ps1/main.ps1` を実行することで、音声書き起こし結果をご自身のワークフローへ流し込むことができます。
-
-```powershell
-# 実行方法
-powershell .\main.ps1 `
-    -AWS_ACCESS_KEY_ID <アクセスキー> `
-    -AWS_SECRET_ACCESS_KEY <シークレットキー> `
-    -REGION <リージョン>`
-    -FILE_PATH <ローカルの音声ファイルのパス>
-    -S3 <S3バケット名>
-    -DIFY_API_KEY <Dify ワークフローのAPIキー>
-```
-
-### Shell Script の場合：
-`packages/cdk/lib/script/sh/dify.sh` の `BASE_URL` を編集して、`packages/cdk/lib/script/sh/main.sh` を実行することで、音声書き起こし結果をご自身のワークフローへ流し込むことができます。
-
-```bash
-# 事前にファイルに実行権限を与えておく必要がございます。
-# 実行方法
-sh ./main.sh \
-    --aws-access-key-id <アクセスキー> \
-    --aws-secret-access-key <シークレットキー> \
-    --region <リージョン> \
-    --file-path <ローカルの音声ファイルのパス> \
-    --s3 <S3バケット名>
-    --dify-api-key <Dify ワークフローのAPIキー>
-```
-
-## デバッグモード
-以降の手順は、`debugMode: true` の場合の、検証方法です。
-
-### Windows Serverインスタンスへの RDP トンネル確立
-
-デプロイ後、以下の手順で Windows Server インスタンスに接続できます：
-
-1. キーペアの取得
-    ```bash
-    npm run debug:get-pem
-    ```
-
-2. Windowsパスワードの取得
-    ```bash
-    npm run debug:pw
-    ```
-
-3. RDPトンネルの確立
-    ```bash
-    npm run debug:rdp
-    ```
-
-### RDPクライアントで接続
-
-Windows Apps などを利用して接続できます。
-
-EC2 は完全閉域にデプロイされるため、インターネットへ接続できません。そのため、事前にローカルへ AWS CLI v2 ダウンロードしておき、ローカルのフォルダをリモート先にマウントし、参照できるようにします。これにより、インターネットに接続できない EC2 に[AWS CLI v2 for Windows の msi](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/getting-started-install.html) をダウンロードします。（ローカルからコピー）
-
-ローカルのRDPクライアントを起動し、以下の情報で接続します：
-- ホスト: `localhost:13389`
-- ユーザー名: `Administrator`
-- パスワード: 手順2で取得したパスワード
-
-接続後、ローカルから AWS CLI v2 をリモートにコピーして、インストールを行います。同梱している PS1 ファイルは AWS CLI v2 を利用する前提で、スクリプトが組まれています。
 
 ## エラー対応
 ### EC2 Instance (NAT Instance) のデプロイに失敗した場合
