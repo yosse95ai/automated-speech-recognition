@@ -8,7 +8,7 @@ import { EnvironmentProps } from "./environment";
 export const props: EnvironmentProps = {
   awsRegion: "ap-northeast-1",
   awsAccount: process.env.CDK_DEFAULT_ACCOUNT!,
-  bucketName: "s3-asr-bucket2",
+  bucketName: "s3-asr-bucket",
   apiVpcCidr: "10.0.0.0/16",
   onpremiseCidr: "10.128.0.0/16",
 
@@ -20,7 +20,8 @@ export const props: EnvironmentProps = {
 
   // usecase options
   useTranscribe: false,
-  useBedrockAgents: false
+  useBedrockAgents: false,
+  useS3OnpremDirectly: false
 };
 
 const app = new cdk.App();

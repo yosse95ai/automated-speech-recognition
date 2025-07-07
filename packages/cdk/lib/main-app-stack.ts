@@ -1,20 +1,21 @@
-import * as cdk from 'aws-cdk-lib';
-import { Construct } from 'constructs';
+import * as cdk from "aws-cdk-lib";
+import { Construct } from "constructs";
 
-import { EnvironmentProps } from '../bin/environment';
+import { EnvironmentProps } from "../bin/environment";
 
-import { DifyVpcEndpoints } from './constructor/api/dify-vpc-endpoints';
-import { Route53ResolverEndpoint } from './constructor/api/route53-resolver-endpoint';
-import { S3Bucket } from './constructor/api/s3-bucket';
-import { S3VpcEndpoint } from './constructor/api/s3-vpc-endpoint';
-import { TranscribeVpcEndpoint } from './constructor/api/transcribe-vpc-endpoint';
-import { Vpc as ApiVpcConstruct } from './constructor/api/vpc';
-import { Ec2Instance } from './constructor/onprem/ec2-instance';
-import { Vpc as OnpremVpcConstruct } from './constructor/onprem/vpc';
-import { VpcPeering } from './constructor/vpc-peering';
+import { DifyVpcEndpoints } from "./constructor/api/dify-vpc-endpoints";
+import { Route53ResolverEndpoint } from "./constructor/api/route53-resolver-endpoint";
+import { S3Bucket } from "./constructor/api/s3-bucket";
+import { S3VpcEndpoint } from "./constructor/api/s3-vpc-endpoint";
+import { TranscribeVpcEndpoint } from "./constructor/api/transcribe-vpc-endpoint";
+import { Vpc as ApiVpcConstruct } from "./constructor/api/vpc";
+import { Ec2Instance } from "./constructor/onprem/ec2-instance";
+import { Vpc as OnpremVpcConstruct } from "./constructor/onprem/vpc";
+import { VpcPeering } from "./constructor/vpc-peering";
 
-
-export interface MainAppStackProps extends cdk.StackProps, Omit<EnvironmentProps, 'awsRegion' | 'awsAccount'>{}
+export interface MainAppStackProps
+  extends cdk.StackProps,
+    Omit<EnvironmentProps, "awsRegion" | "awsAccount"> {}
 export class MainAppStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: MainAppStackProps) {
     super(scope, id, props);
@@ -77,17 +78,19 @@ export class MainAppStack extends cdk.Stack {
     });
 
     // Create S3 VPC Endpoint in API VPC
-    const s3Endpoint = new S3VpcEndpoint(this, "ApiS3VpcEndpoint", {
-      vpc: apiVpc.vpc,
-      name: "Api",
-      subnets: apiVpc.privateSubnets,
-      sourceCidr: props.onpremiseCidr,
-    });
+    if (props.useS3OnpremDirectly) {
+      const s3Endpoint = new S3VpcEndpoint(this, "ApiS3VpcEndpoint", {
+        vpc: apiVpc.vpc,
+        name: "Api",
+        subnets: apiVpc.privateSubnets,
+        sourceCidr: props.onpremiseCidr,
+      });
 
-    // Create Transcribe Bucket
-    new S3Bucket(this, "S3AsrBucket", {
-      bucketName: props.bucketName,
-      vpcEndpointId: s3Endpoint.endpoint.vpcEndpointId,
-    });
+      // Create Transcribe Bucket
+      new S3Bucket(this, "S3AsrBucket", {
+        bucketName: props.bucketName,
+        vpcEndpointId: s3Endpoint.endpoint.vpcEndpointId,
+      });
+    }
   }
 }

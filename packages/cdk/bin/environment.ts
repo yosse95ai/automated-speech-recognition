@@ -47,9 +47,15 @@ export interface EnvironmentProps {
    */
   useTranscribe: boolean;
 
-    /**
+  /**
    * True if you want to use Bedrock Anget　to use agent usecase
    * @example false
    */
   useBedrockAgents: boolean;
+  
+  /**
+   * True if you want to use S3 from on-premise directly
+   * @example false
+   */
+  useS3OnpremDirectly: boolean;
 }
