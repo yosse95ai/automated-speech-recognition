@@ -27,7 +27,6 @@
     "rootDir": ".",
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "types": ["node"]
   },
   "include": [
     "bin/app.ts",
