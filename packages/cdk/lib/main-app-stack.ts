@@ -50,12 +50,14 @@ export class MainAppStack extends cdk.Stack {
     }
 
     // Create Transcribe VPC Endpoint in API VPC
-    new TranscribeVpcEndpoint(this, "ApiTranscribeVpcEndpoint", {
-      vpc: apiVpc.vpc,
-      name: "Api",
-      subnets: apiVpc.privateSubnets,
-      souceCidr: props.onpremiseCidr,
-    });
+    if (props.useTranscribe) {
+      new TranscribeVpcEndpoint(this, "ApiTranscribeVpcEndpoint", {
+        vpc: apiVpc.vpc,
+        name: "Api",
+        subnets: apiVpc.privateSubnets,
+        souceCidr: props.onpremiseCidr,
+      });
+    }
 
     // Create Route 53 Resolver Inbound Endpoint in API VPC
     new Route53ResolverEndpoint(this, "ApiRoute53InboundEndpoint", {
@@ -71,6 +73,7 @@ export class MainAppStack extends cdk.Stack {
       name: "Api",
       subnets: apiVpc.privateSubnets,
       debugMode: props.debugMode,
+      useBedrockAgents: props.useBedrockAgents,
     });
 
     // Create S3 VPC Endpoint in API VPC

@@ -40,4 +40,16 @@ export interface EnvironmentProps {
    * @example false
    */
   difySetup: boolean;
+
+  /**
+   * True if you want to use AWS Transcribe　to use transcription usecase
+   * @example false
+   */
+  useTranscribe: boolean;
+
+    /**
+   * True if you want to use Bedrock Anget　to use agent usecase
+   * @example false
+   */
+  useBedrockAgents: boolean;
 }
