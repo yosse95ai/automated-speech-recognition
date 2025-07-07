@@ -1,20 +1,20 @@
-import * as cdk from 'aws-cdk-lib';
-import { 
+import * as cdk from "aws-cdk-lib";
+import {
   GatewayVpcEndpoint,
   GatewayVpcEndpointAwsService,
   InterfaceVpcEndpoint,
   InterfaceVpcEndpointAwsService,
   IVpc,
   ISubnet,
-} from 'aws-cdk-lib/aws-ec2';
-import { Construct } from 'constructs';
+} from "aws-cdk-lib/aws-ec2";
+import { Construct } from "constructs";
 
 export interface DifyVpcEndpointsProps {
   /**
    * VPC to create endpoints in
    */
   vpc: IVpc;
-  
+
   /**
    * Name prefix for the resources
    */
@@ -29,6 +29,11 @@ export interface DifyVpcEndpointsProps {
    * Debug mode flag
    */
   debugMode: boolean;
+
+  /**
+   * Bedrock Agents flag
+   */
+  useBedrockAgents: boolean;
 }
 
 /**
@@ -44,10 +49,14 @@ export class DifyVpcEndpoints extends Construct {
       {
         service: InterfaceVpcEndpointAwsService.BEDROCK_RUNTIME,
       },
-      {
-        service: InterfaceVpcEndpointAwsService.BEDROCK_AGENT_RUNTIME,
-      },
     ];
+
+    // Add Bedrock Agents endpoint
+    if (props.useBedrockAgents) {
+      serviceList.push({
+        service: InterfaceVpcEndpointAwsService.BEDROCK_AGENT_RUNTIME,
+      });
+    }
 
     // Add SSM_MESSAGES endpoint only in debug mode
     if (props.debugMode) {
@@ -64,14 +73,17 @@ export class DifyVpcEndpoints extends Construct {
           subnets: props.subnets,
         },
       });
-      cdk.Tags.of(endpoint).add('Name', `s3asr-${item.service.shortName}Endpoint`);
+      cdk.Tags.of(endpoint).add(
+        "Name",
+        `s3asr-${item.service.shortName}Endpoint`
+      );
     });
 
     // for ECS Fargate and Dify app
-    const gwVpce = new GatewayVpcEndpoint(this, 'S3', {
+    const gwVpce = new GatewayVpcEndpoint(this, "S3", {
       vpc: props.vpc,
       service: GatewayVpcEndpointAwsService.S3,
     });
-    cdk.Tags.of(gwVpce).add('Name', `s3asr-s3-gatewayEndpoint`);
+    cdk.Tags.of(gwVpce).add("Name", `s3asr-s3-gatewayEndpoint`);
   }
 }
