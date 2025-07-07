@@ -1,9 +1,6 @@
 {
   "name": "cdk",
   "version": "0.1.0",
-  "bin": {
-    "cdk": "dist/bin/app.js"
-  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
