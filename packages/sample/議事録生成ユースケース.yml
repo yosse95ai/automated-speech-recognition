@@ -1065,7 +1065,7 @@ workflow:
           aws_region: ap-northeast-1
           identify_language: 0
           identify_multiple_languages: 0
-          s3_bucket_name: difyonawsstack-storagebucket19db2ff8-wdcg4jfpwofu
+          s3_bucket_name: difyonawsstack-storagebucket19dxxxxxxxx
         tool_description: A tool for ASR (Automatic Speech Recognition) - https://github.com/aws-samples/dify-aws-tool
         tool_label: TranscribeASR
         tool_name: transcribe_asr
@@ -1244,7 +1244,7 @@ workflow:
           14px;","textFormat":0},{"children":[{"detail":0,"format":0,"mode":"normal","style":"font-size:
           14px;","text":"AWSアカウントにログインすることで参照可能。","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textStyle":"font-size:
           14px;","textFormat":0},{"children":[{"detail":0,"format":0,"mode":"normal","style":"font-size:
-          14px;","text":"例：difyonawsstack-storagebucket19db2ff8-wdcg4jfpwofu","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textStyle":"font-size:
+          14px;","text":"例：difyonawsstack-storagebucket19dxxxxxxxx","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textStyle":"font-size:
           14px;","textFormat":0},{"children":[],"direction":null,"format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""},{"children":[{"detail":0,"format":0,"mode":"normal","style":"font-size:
           14px;","text":"AWS Region：ap-northeast-1","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textStyle":"font-size:
           14px;","textFormat":0},{"children":[],"direction":null,"format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""},{"children":[{"detail":0,"format":0,"mode":"normal","style":"font-size:
