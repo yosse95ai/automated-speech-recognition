@@ -1,5 +1,5 @@
 # デバッグモード
-以降の手順は、`debugMode: true` の場合の検証方法です。以下のリソースが追加で立ち上がります。
+以降の手順は、`debugMode: true` の場合の検証方法です。以下のリソースが追加で立ち上がります。（[構成図](./architecture.png)左側相当）
 
 1. OnpremVPC：Private サブネットに Windows Serverインスタンスを含む（1つのAZ）
 2. OnpremVPCとAPI VPC間のVPCピアリング接続
@@ -22,7 +22,7 @@
 
 ## Windows Serverインスタンスへの RDP トンネル確立
 
-デプロイ後、以下の手順で Windows Server インスタンスに接続できます：
+デプロイ後、以下の手順でローカル端末から Windows Server インスタンスに接続できます：
 
 1. キーペアの取得
     ```bash
@@ -41,7 +41,7 @@
 
 ## RDPクライアントで接続
 
-Windows Apps などを利用して接続できます。
+トンネルを確立した端末の Windows Apps などを利用してリモートデスクトップ接続できます。
 
 EC2 は完全閉域にデプロイされるため、インターネットへ接続できません。そのため、事前にローカルへ AWS CLI v2 ダウンロードしておき、ローカルのフォルダをリモート先にマウントし、参照できるようにします。これにより、インターネットに接続できない EC2 に[AWS CLI v2 for Windows の msi](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/getting-started-install.html) をダウンロードします。（ローカルからコピー）
 
