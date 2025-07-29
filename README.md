@@ -13,6 +13,7 @@
 - [Node.js](https://nodejs.org/en/download/) (v18 or newer)
 - [docker](https://docs.docker.com/get-docker/)
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and IAM profile with Administrator policy
+- デプロイ用の端末 CLI で AWS アカウントにログイン済み (IAM Identity Center や IAM ユーザーなど、端末に認証情報がセットされている)
 
 ## 準備
 リポジトリのクローン。
@@ -59,13 +60,13 @@ export const props: EnvironmentProps = {
 #### debugMode: `false` の場合：
 以下のリソースが立ち上がります。
 
-1. API VPC (Multi-AZ)：
-   - プライベートサブネット: Dify　のリソースと Amazon Transcribe, Amazon S3 の VPC エンドポイントが立ちます。
-   - パブリックサブネット: Dify 初回セットアップ用
-4. API VPC内のTranscribeインターフェースVPCエンドポイント
-5. Dify セットアップ用のNATインスタンス (`difySetup: true` の場合)
+1. API VPC：
+   - プライベートサブネット: 2
+   - パブリックサブネット: 2
+2. Dify セットアップ用のNATインスタンス (`difySetup: true` の場合)
+   - パブリックサブネットに 1 つ起動
    - セットアップ完了後に `false` にすることでNATインスタンスを消去可能
-6. DNS通信用のセキュリティグループ
+3. Route 53 VPC エンドポイント (オンプレ名前解決転送先)
 
 #### debugMode: `true` の場合：
 オンプレミス想定の Windows EC2 から 閉域の Dify の動作確認するためのセットアップ方法はこちらをご覧ください。([Windows EC2 インスタンスでデバッグをする方法](doc/WindowsEC2.md))
@@ -140,30 +141,6 @@ y resolved within minutes, please allow up to 4 hours for this process to comple
 [https://support.console.aws.amazon.com/support/home?region=us-east-1#/case/create?issueType=customer-service&serviceCode=account-management&categ
 oryCode=account-verification] (Service: Ec2, Status Code: 400, Request ID: 1afaae05-99a3-4c7f-83f8-da3aeec73ed2) (SDK Attempt Count: 2)" (RequestT
 oken: aef78f85-5dea-3c42-7d9b-bcfa46247bd0, HandlerErrorCode: InvalidRequest)
-```
-
-## 閉域網の S3 へのアップロードがタイムアウトになる
-閉域を想定している場合、S3へアクセスする端末から、S3 の名前解決結果が VPC エンドポイントになっていること確認してください。[# Windows (PowerShell)>>](#windows-powershell)
-
-名前解決結果としてグローバル IP が返却されている可能性があります。以下のようなグローバル IP が返却される場合は、名前解決の設定をご確認ください。
-
-(※デバッグモードの場合 DHCP オプションの反映まで数分かかります。)
-
-```
-> nslookup s3.ap-northeast-1.amazonaws.com
-
-サーバー:  ip-10-128-0-2.ap-northeast-1.compute.internal
-Address:  10.128.0.2
-
-名前:    s3.ap-northeast-1.amazonaws.com
-Addresses:  3.5.156.34
-	  52.219.136.240
-	  3.5.158.89
-	  52.219.172.0
-	  52.219.162.48
-	  3.5.158.16
-	  52.219.162.108
-	  52.219.151.116 
 ```
 
 ## ライセンス
