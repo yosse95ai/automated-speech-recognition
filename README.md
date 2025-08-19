@@ -79,7 +79,7 @@ export const props: EnvironmentProps = {
   
 ![debugMode: ture](./doc/debug-true.svg)
 
-> [!info]
+> [!Note]
 > オンプレミス想定の Windows EC2 から 閉域の Dify の動作確認するためのセットアップ方法はこちらをご覧ください。([Windows EC2 インスタンスでデバッグをする方法](doc/WindowsEC2.md))
 
 ### デプロイ
