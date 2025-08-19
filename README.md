@@ -139,6 +139,8 @@ popd
 
 詳しい閉域 Dify のデプロイ方法は、[dify-self-hosted-on-aws #Deploying to a closed network (a.k.a 閉域要件)](https://github.com/aws-samples/dify-self-hosted-on-aws?tab=readme-ov-file#deploying-to-a-closed-network-aka-%E9%96%89%E5%9F%9F%E8%A6%81%E4%BB%B6) をご確認ください。
 
+![dify-setup](./doc/dify-setup.svg)
+
 
 ## エラー対応
 ### EC2 Instance (NAT Instance) のデプロイに失敗した場合
