@@ -51,3 +51,5 @@ Windows Apps などを利用して接続できます。
 - パスワード: 手順2で取得したパスワード
 
 接続後、Microsoft Edge などのブラウザから、ALB のドメイン名へアクセスすることができます。
+
+![debug from EC2](./debug-ec2.png)
