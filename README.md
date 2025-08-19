@@ -1,4 +1,4 @@
-# Automated Speech Recognition w/ Dify on AWS with CDK
+# Private Dify sample architecture w/ Dify on AWS with CDK
 
 ![architecture](doc/architecture.svg)
 
