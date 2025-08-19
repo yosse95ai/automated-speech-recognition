@@ -1,6 +1,6 @@
 # Automated Speech Recognition w/ Dify on AWS with CDK
 
-![architecture](doc/architecture.png)
+![architecture](doc/architecture.svg)
 
 > [!Note]
 > `debugMode: false` の場合、API VPC のリソースのみ作成されます。
@@ -30,7 +30,7 @@ git clone --recurse-submodules https://github.com/yosse95ai/automated-speech-rec
 
 このCDKプロジェクトでは、[packages/bin/app.ts](./packages/cdk/bin/app.ts) のパラメータ設定により、立ち上げるリソースを変更することができます。詳しくは[設定](#設定)を確認ください。
 
-### 設定
+### パラメーター設定
 [packages/cdk/bin/app.ts](packages/cdk/bin/app.ts) を編集します。この設定により、デプロイされるリソースやその設定が決定します。
 ```ts
 export const props: EnvironmentProps = {
@@ -56,19 +56,31 @@ export const props: EnvironmentProps = {
 > [!Warning]
 > S3 バケットの名前は一意なものをつけてください。
 
-#### debugMode: `false` の場合：
-以下のリソースが立ち上がります。
+[アーキテクチャ](doc/architecture.svg)右側の VPC (API VPC) に以下のリソースが立ち上がります。
 
-1. API VPC (Multi-AZ)：
-   - プライベートサブネット: Dify　のリソースと Amazon Transcribe, Amazon S3 の VPC エンドポイントが立ちます。
-   - パブリックサブネット: Dify 初回セットアップ用
-4. API VPC内のTranscribeインターフェースVPCエンドポイント
-5. Dify セットアップ用のNATインスタンス (`difySetup: true` の場合)
-   - セットアップ完了後に `false` にすることでNATインスタンスを消去可能
-6. DNS通信用のセキュリティグループ
+- プライベートサブネット
+  - Dify　のリソースと Amazon Bedrock VPC エンドポイント
+  - Route 53 Resolver インバウンドエンドポイント
+  - Amazon Transcribe インターフェース VPC エンドポイント (`useTranscribe: true`)
+  - Systems Manager Session Manager インターフェース VPC エンドポイント (`debugMode: true`)
+  - S3 インターフェース VPC エンドポイント (`useS3OnpremDirectly: true`)
+  - Bedrock Agents インターフェース VPC エンドポイント (`useBedrockAgents: true`)
+- パブリックサブネット
+  - Dify セットアップ用のNATインスタンス (`difySetup: true`)
+    - セットアップ完了後に `false` にすることでNATインスタンスを消去可能
 
-#### debugMode: `true` の場合：
-オンプレミス想定の Windows EC2 から 閉域の Dify の動作確認するためのセットアップ方法はこちらをご覧ください。([Windows EC2 インスタンスでデバッグをする方法](doc/WindowsEC2.md))
+![デフォルトアーキテクチャ](./doc/asr-default.svg)
+
+`debugMode: true` とすることで、[アーキテクチャ](doc/architecture.svg)左側の VPC (Onprem VPC) に以下のリソースが立ち上がります。
+- プライベートサブネット
+  - EC2 インスタンス (Windows Server 2022)
+  - EC2 Instace Connect エンドポイント (RDP 用)
+  - VPC Peering (Onpurem VPC -- API VPC)
+  
+![debugMode: ture](./doc/debug-true.svg)
+
+> [!info]
+> オンプレミス想定の Windows EC2 から 閉域の Dify の動作確認するためのセットアップ方法はこちらをご覧ください。([Windows EC2 インスタンスでデバッグをする方法](doc/WindowsEC2.md))
 
 ### デプロイ
 設定完了後、以下のコマンドでデプロイします。
@@ -101,9 +113,9 @@ export const props: EnvironmentProps = {
   awsRegion: 'ap-northeast-1', // 本プロジェクトをデプロイしたのと同じリージョンに変更
   awsAccount: process.env.CDK_DEFAULT_ACCOUNT!,
   // Set Dify version
-  difyImageTag: '1.4.3',
+  difyImageTag: '1.7.1',
   // Set plugin-daemon version to stable release
-  difyPluginDaemonImageTag: '0.1.2-local',
+  difyPluginDaemonImageTag: '0.2.0-local',
 
   // 以下を追記します。
   useCloudFront: false,
@@ -140,30 +152,6 @@ y resolved within minutes, please allow up to 4 hours for this process to comple
 [https://support.console.aws.amazon.com/support/home?region=us-east-1#/case/create?issueType=customer-service&serviceCode=account-management&categ
 oryCode=account-verification] (Service: Ec2, Status Code: 400, Request ID: 1afaae05-99a3-4c7f-83f8-da3aeec73ed2) (SDK Attempt Count: 2)" (RequestT
 oken: aef78f85-5dea-3c42-7d9b-bcfa46247bd0, HandlerErrorCode: InvalidRequest)
-```
-
-## 閉域網の S3 へのアップロードがタイムアウトになる
-閉域を想定している場合、S3へアクセスする端末から、S3 の名前解決結果が VPC エンドポイントになっていること確認してください。[# Windows (PowerShell)>>](#windows-powershell)
-
-名前解決結果としてグローバル IP が返却されている可能性があります。以下のようなグローバル IP が返却される場合は、名前解決の設定をご確認ください。
-
-(※デバッグモードの場合 DHCP オプションの反映まで数分かかります。)
-
-```
-> nslookup s3.ap-northeast-1.amazonaws.com
-
-サーバー:  ip-10-128-0-2.ap-northeast-1.compute.internal
-Address:  10.128.0.2
-
-名前:    s3.ap-northeast-1.amazonaws.com
-Addresses:  3.5.156.34
-	  52.219.136.240
-	  3.5.158.89
-	  52.219.172.0
-	  52.219.162.48
-	  3.5.158.16
-	  52.219.162.108
-	  52.219.151.116 
 ```
 
 ## ライセンス

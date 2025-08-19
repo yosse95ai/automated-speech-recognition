@@ -6,6 +6,8 @@
 3. OnpremVPC内のプライベートサブネットにWindows Serverインスタンス
 4. EC2インスタンスコネクトエンドポイント（インスタンスへのRDP接続用）
 
+![debugMode: true](./debug-true.svg)
+
 このモードではデプロイ後に以下を行う必要があります。以下のセットアップをマネジメントコンソール上で行うことにより、検証用 EC2 (Windows Server) から S3 や Transcribe、Dify への VPC を跨いだ通信ができるようになります。
 
 1. Peeringごとのルートテーブルの設定
@@ -43,11 +45,9 @@
 
 Windows Apps などを利用して接続できます。
 
-EC2 は完全閉域にデプロイされるため、インターネットへ接続できません。そのため、事前にローカルへ AWS CLI v2 ダウンロードしておき、ローカルのフォルダをリモート先にマウントし、参照できるようにします。これにより、インターネットに接続できない EC2 に[AWS CLI v2 for Windows の msi](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/getting-started-install.html) をダウンロードします。（ローカルからコピー）
-
 ローカルのRDPクライアントを起動し、以下の情報で接続します：
 - ホスト: `localhost:13389`
 - ユーザー名: `Administrator`
 - パスワード: 手順2で取得したパスワード
 
-接続後、ローカルから AWS CLI v2 をリモートにコピーして、インストールを行います。同梱している PS1 ファイルは AWS CLI v2 を利用する前提で、スクリプトが組まれています。
+接続後、Microsoft Edge などのブラウザから、ALB のドメイン名へアクセスすることができます。
