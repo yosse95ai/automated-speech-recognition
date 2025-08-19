@@ -1,6 +1,3 @@
-import * as fs from "fs";
-import * as path from "path";
-
 import * as cdk from "aws-cdk-lib";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as iam from "aws-cdk-lib/aws-iam";
@@ -76,42 +73,7 @@ export class Ec2Instance extends Construct {
       `Allow RDP access from EC2 Instance Connect Endpoint for ${props.name}`
     );
 
-    // Read the PS1 script contents
-    const transcribeScriptPath = path.join(__dirname, "../../script/ps1", "transcribe.ps1");
-    const difyScriptPath = path.join(__dirname, "../../script/ps1", "dify.ps1");
-    const mainScriptPath = path.join(__dirname, "../../script/ps1", "main.ps1");
-    
-    const transcribeScript = fs.readFileSync(transcribeScriptPath, "utf8");
-    const difyScript = fs.readFileSync(difyScriptPath, "utf8");
-    const mainScript = fs.readFileSync(mainScriptPath, "utf8");
 
-    // Prepare user data to save all PS1 scripts to the Administrator's home folder
-    const userData = ec2.UserData.forWindows();
-    userData.addCommands(
-      // Create UTF-8 encoding object (no BOM)
-      `$Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $False`,
-      
-      // Save transcribe.ps1
-      `$transcribeScript = @'
-${transcribeScript}
-'@`,
-      `[System.IO.File]::WriteAllText("C:\\Users\\Administrator\\transcribe.ps1", $transcribeScript, $Utf8NoBomEncoding)`,
-      `Write-EventLog -LogName Application -Source "Amazon EC2" -EntryType Information -EventId 1000 -Message "Transcribe script has been saved to Administrator's home folder with UTF-8 encoding"`,
-      
-      // Save dify.ps1
-      `$difyScript = @'
-${difyScript}
-'@`,
-      `[System.IO.File]::WriteAllText("C:\\Users\\Administrator\\dify.ps1", $difyScript, $Utf8NoBomEncoding)`,
-      `Write-EventLog -LogName Application -Source "Amazon EC2" -EntryType Information -EventId 1001 -Message "Dify script has been saved to Administrator's home folder with UTF-8 encoding"`,
-      
-      // Save main.ps1
-      `$mainScript = @'
-${mainScript}
-'@`,
-      `[System.IO.File]::WriteAllText("C:\\Users\\Administrator\\main.ps1", $mainScript, $Utf8NoBomEncoding)`,
-      `Write-EventLog -LogName Application -Source "Amazon EC2" -EntryType Information -EventId 1002 -Message "Main script has been saved to Administrator's home folder with UTF-8 encoding"`
-    );
 
     // Create a Windows Server EC2 instance in one of the private subnets
     this.instance = new ec2.Instance(this, `${props.name}PrivateEC2Instance`, {
@@ -133,7 +95,6 @@ ${mainScript}
         `${props.name}ImportedKeyPair`,
         cdk.Token.asString(this.keyPair.ref)
       ),
-      userData: userData,
     });
 
     cdk.Tags.of(this.instance).add("Name", `s3asr-${props.name}EC2Instance`)
