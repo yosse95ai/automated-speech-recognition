@@ -1,4 +1,4 @@
-# Private Dify sample architecture w/ Dify on AWS with CDK
+# Automated Speech Recognition w/ Dify on AWS with CDK
 
 ![architecture](doc/architecture.svg)
 
@@ -50,6 +50,8 @@ export const props: EnvironmentProps = {
   useTranscribe: false, // 音声書き起こしで Transcribe を利用する場合 (true)
   useBedrockAgents: false, // Bedrock Agents を利用する場合 (true)
   useS3OnpremDirectly: false, // オンプレから直接 S3 を呼び出したい場合 (true)
+  useR53ResolverEndpoint: true, // Route 53 resolver inbound endpoint を利用する場合 (true)
+  useInternalNlb: false, // ALB の前段に NLB を設ける場合 (true)
 };
 ```
 
@@ -60,7 +62,7 @@ export const props: EnvironmentProps = {
 
 - プライベートサブネット
   - Dify　のリソースと Amazon Bedrock VPC エンドポイント
-  - Route 53 Resolver インバウンドエンドポイント
+  - Route 53 Resolver インバウンドエンドポイント (`useR53ResolverEndpoint: true`)
   - Amazon Transcribe インターフェース VPC エンドポイント (`useTranscribe: true`)
   - Systems Manager Session Manager インターフェース VPC エンドポイント (`debugMode: true`)
   - S3 インターフェース VPC エンドポイント (`useS3OnpremDirectly: true`)
@@ -70,6 +72,11 @@ export const props: EnvironmentProps = {
     - セットアップ完了後に `false` にすることでNATインスタンスを消去可能
 
 ![デフォルトアーキテクチャ](./doc/asr-default.svg)
+
+> [!Note]
+> NLB を利用する必要がある場合は`useInternalNlb: true` を設定する。
+> 詳しくはこちらをご覧ください。([Internal NLB for Dify 設定手順書](doc/internal-nlb-setup.md))
+
 
 `debugMode: true` とすることで、[アーキテクチャ](doc/architecture.svg)左側の VPC (Onprem VPC) に以下のリソースが立ち上がります。
 - プライベートサブネット
