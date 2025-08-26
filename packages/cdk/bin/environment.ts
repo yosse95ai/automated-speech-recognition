@@ -58,4 +58,16 @@ export interface EnvironmentProps {
    * @example false
    */
   useS3OnpremDirectly: boolean;
+
+  /**
+   * True is you want to use Route 53 resolver inbound endpoint
+   * @example true
+   */
+  useR53ResolverEndpoint: boolean;
+
+  /**
+   * True if you want to deploy Internal NLB
+   * @example false
+   */
+  useInternalNlb: boolean;
 }

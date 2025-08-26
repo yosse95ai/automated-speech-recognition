@@ -16,12 +16,14 @@ export const props: EnvironmentProps = {
   difySetup: false,
 
   // for debug
-  debugMode: false,
+  debugMode: true,
 
   // usecase options
-  useTranscribe: false,
+  useTranscribe: true,
   useBedrockAgents: false,
-  useS3OnpremDirectly: false
+  useS3OnpremDirectly: false,
+  useR53ResolverEndpoint: false,
+  useInternalNlb: true
 };
 
 const app = new cdk.App();

@@ -4,6 +4,7 @@ import { Construct } from "constructs";
 import { EnvironmentProps } from "../bin/environment";
 
 import { DifyVpcEndpoints } from "./constructor/api/dify-vpc-endpoints";
+import { InternalNlb } from "./constructor/api/internal-nlb";
 import { Route53ResolverEndpoint } from "./constructor/api/route53-resolver-endpoint";
 import { S3Bucket } from "./constructor/api/s3-bucket";
 import { S3VpcEndpoint } from "./constructor/api/s3-vpc-endpoint";
@@ -61,13 +62,15 @@ export class MainAppStack extends cdk.Stack {
     }
 
     // Create Route 53 Resolver Inbound Endpoint in API VPC
-    new Route53ResolverEndpoint(this, "ApiRoute53InboundEndpoint", {
-      vpc: apiVpc.vpc,
-      name: "Api",
-      sourceCidr: props.onpremiseCidr,
-      subnets: apiVpc.privateSubnets,
-    });
-
+    if (props.useR53ResolverEndpoint) {
+      new Route53ResolverEndpoint(this, "ApiRoute53InboundEndpoint", {
+        vpc: apiVpc.vpc,
+        name: "Api",
+        sourceCidr: props.onpremiseCidr,
+        subnets: apiVpc.privateSubnets,
+      });
+    }
+    
     // Create all necessary VPC endpoints for Dify deployment in API VPC
     new DifyVpcEndpoints(this, "ApiDifyVpcEndpoints", {
       vpc: apiVpc.vpc,
@@ -90,6 +93,15 @@ export class MainAppStack extends cdk.Stack {
       new S3Bucket(this, "S3AsrBucket", {
         bucketName: props.bucketName,
         vpcEndpointId: s3Endpoint.endpoint.vpcEndpointId,
+      });
+    }
+
+    // Create Internal NLB
+    if (props.useInternalNlb) {
+      new InternalNlb(this, "ApiInternalNlb", {
+        vpc: apiVpc.vpc,
+        name: "Api",
+        subnets: apiVpc.privateSubnets,
       });
     }
   }
