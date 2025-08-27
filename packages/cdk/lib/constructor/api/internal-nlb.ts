@@ -7,6 +7,7 @@ export interface InternalNlbProps {
   vpc: ec2.IVpc;
   name: string;
   subnets: ec2.ISubnet[];
+  sourceCidr: string; // オンプレミス CIDR
   port?: number; // デフォルト: 80
 }
 
@@ -38,6 +39,22 @@ export class InternalNlb extends Construct {
       );
     }
 
+    // セキュリティグループの作成
+    const nlbSecurityGroup = new ec2.SecurityGroup(this, `${props.name}NlbSecurityGroup`, {
+      vpc: props.vpc,
+      description: 'Security group for Internal NLB - allows traffic from on-premise only',
+      allowAllOutbound: true,
+    });
+
+    // オンプレミス CIDR からのインバウンドルールを追加
+    nlbSecurityGroup.addIngressRule(
+      ec2.Peer.ipv4(props.sourceCidr),
+      ec2.Port.tcp(port),
+      'Allow traffic from on-premise CIDR'
+    );
+
+    cdk.Tags.of(nlbSecurityGroup).add('Name', `s3asr-${props.name}-nlb-security-group`);
+
     // Network Load Balancer の作成（内部向け、動的 IP）
     this.nlb = new elbv2.NetworkLoadBalancer(this, `${props.name}InternalNlb`, {
       vpc: props.vpc,
@@ -45,6 +62,7 @@ export class InternalNlb extends Construct {
       vpcSubnets: {
         subnets: props.subnets,
       },
+      securityGroups: [nlbSecurityGroup], // セキュリティグループを関連付け
     });
 
     cdk.Tags.of(this.nlb).add('Name', `s3asr-${props.name}-internal-nlb`);
