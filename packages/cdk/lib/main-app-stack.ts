@@ -102,6 +102,7 @@ export class MainAppStack extends cdk.Stack {
         vpc: apiVpc.vpc,
         name: "Api",
         subnets: apiVpc.privateSubnets,
+        sourceCidr: props.onpremiseCidr,
       });
     }
   }
