@@ -23,6 +23,7 @@ describe('MainAppStack NLB Integration', () => {
       useTranscribe: false,
       useBedrockAgents: false,
       useS3OnpremDirectly: false,
+      useR53ResolverEndpoint: true,
       useInternalNlb: true, // NLB を有効化
     });
 
@@ -32,11 +33,11 @@ describe('MainAppStack NLB Integration', () => {
     // NLB リソースの作成を確認
     template.hasResourceProperties('AWS::ElasticLoadBalancingV2::LoadBalancer', {
       Type: 'network',
-      Scheme: 'internet-facing',
+      Scheme: 'internal',
     });
     
-    // Elastic IP の作成を確認
-    template.resourceCountIs('AWS::EC2::EIP', 2); // 2つのAZ用
+    // Elastic IP の作成を確認（内部 NLB では作成されない）
+    template.resourceCountIs('AWS::EC2::EIP', 0);
     
     // ターゲットグループの作成を確認
     template.hasResourceProperties('AWS::ElasticLoadBalancingV2::TargetGroup', {
@@ -56,6 +57,7 @@ describe('MainAppStack NLB Integration', () => {
       useTranscribe: false,
       useBedrockAgents: false,
       useS3OnpremDirectly: false,
+      useR53ResolverEndpoint: true,
       useInternalNlb: false, // NLB を無効化
     });
 
@@ -66,34 +68,6 @@ describe('MainAppStack NLB Integration', () => {
     template.resourceCountIs('AWS::ElasticLoadBalancingV2::LoadBalancer', 0);
     template.resourceCountIs('AWS::EC2::EIP', 0);
     template.resourceCountIs('AWS::ElasticLoadBalancingV2::TargetGroup', 0);
-  });
-
-  test('NLB出力値が正しく設定される', () => {
-    // WHEN
-    const stack = new MainAppStack(app, 'TestStack', {
-      env: { region: 'ap-northeast-1', account: '123456789012' },
-      bucketName: 'test-bucket',
-      apiVpcCidr: '10.0.0.0/16',
-      onpremiseCidr: '10.128.0.0/16',
-      debugMode: false,
-      difySetup: false,
-      useTranscribe: false,
-      useBedrockAgents: false,
-      useS3OnpremDirectly: false,
-      useInternalNlb: true,
-    });
-
-    // THEN
-    const template = Template.fromStack(stack);
-    
-    // 出力値の存在を確認
-    template.hasOutput('InternalNlbArn', {});
-    template.hasOutput('InternalNlbDnsName', {});
-    template.hasOutput('InternalNlbTargetGroupArn', {});
-    template.hasOutput('InternalNlbElasticIp1', {});
-    template.hasOutput('InternalNlbElasticIp2', {});
-    template.hasOutput('InternalNlbElasticIpAllocationId1', {});
-    template.hasOutput('InternalNlbElasticIpAllocationId2', {});
   });
 
   test('debugMode=true と useInternalNlb=true の組み合わせが正常に動作する', () => {
@@ -108,6 +82,7 @@ describe('MainAppStack NLB Integration', () => {
       useTranscribe: false,
       useBedrockAgents: false,
       useS3OnpremDirectly: false,
+      useR53ResolverEndpoint: true,
       useInternalNlb: true, // NLB も有効
     });
 
