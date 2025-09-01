@@ -13,17 +13,17 @@ export const props: EnvironmentProps = {
   onpremiseCidr: "10.128.0.0/16",
 
   // true if you are deploying and/or setting up a dify package for the first time
-  difySetup: false,
+  difySetup: true,
 
   // for debug
-  debugMode: true,
+  debugMode: false,
 
   // usecase options
-  useTranscribe: true,
+  useTranscribe: false,
   useBedrockAgents: false,
   useS3OnpremDirectly: false,
   useR53ResolverEndpoint: false,
-  useInternalNlb: true
+  useInternalNlb: false
 };
 
 const app = new cdk.App();
