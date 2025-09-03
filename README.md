@@ -1,6 +1,6 @@
 # Automated Speech Recognition w/ Dify on AWS with CDK
 
-![architecture](doc/architecture.svg)
+![architecture](doc/img/architecture.svg)
 
 > [!Note]
 > `debugMode: false` の場合、API VPC のリソースのみ作成されます。
@@ -61,7 +61,7 @@ export const props: EnvironmentProps = {
 > [!Warning]
 > S3 バケットの名前は一意なものをつけてください。
 
-[アーキテクチャ](doc/architecture.svg)右側の VPC (API VPC) に以下のリソースが立ち上がります。
+[アーキテクチャ](doc/img/architecture.svg)右側の VPC (API VPC) に以下のリソースが立ち上がります。
 
 - プライベートサブネット
   - Dify　のリソースと Amazon Bedrock VPC エンドポイント
@@ -74,20 +74,20 @@ export const props: EnvironmentProps = {
   - Dify セットアップ用のNATインスタンス (`difySetup: true`)
     - セットアップ完了後に `false` にすることでNATインスタンスを消去可能
 
-![デフォルトアーキテクチャ](./doc/asr-default.svg)
+![デフォルトアーキテクチャ](./doc/img/asr-default.svg)
 
 > [!Note]
 > NLB を利用する必要がある場合は`useInternalNlb: true` を設定する。
 > 詳しくはこちらをご覧ください。([Internal NLB for Dify 設定手順書](doc/internal-nlb-setup.md))
 
 
-`debugMode: true` とすることで、[アーキテクチャ](doc/architecture.svg)左側の VPC (Onprem VPC) に以下のリソースが立ち上がります。
+`debugMode: true` とすることで、[アーキテクチャ](doc/img/architecture.svg)左側の VPC (Onprem VPC) に以下のリソースが立ち上がります。
 - プライベートサブネット
   - EC2 インスタンス (Windows Server 2022)
   - EC2 Instace Connect エンドポイント (RDP 用)
   - VPC Peering (Onpurem VPC -- API VPC)
   
-![debugMode: ture](./doc/debug-true.svg)
+![debugMode: ture](./doc/img/debug-true.svg)
 
 > [!Note]
 > オンプレミス想定の Windows EC2 から 閉域の Dify の動作確認するためのセットアップ方法はこちらをご覧ください。([Windows EC2 インスタンスでデバッグをする方法](doc/WindowsEC2.md))
@@ -149,7 +149,7 @@ popd
 
 詳しい閉域 Dify のデプロイ方法は、[dify-self-hosted-on-aws #Deploying to a closed network (a.k.a 閉域要件)](https://github.com/aws-samples/dify-self-hosted-on-aws?tab=readme-ov-file#deploying-to-a-closed-network-aka-%E9%96%89%E5%9F%9F%E8%A6%81%E4%BB%B6) をご確認ください。
 
-![dify-setup](./doc/dify-setup.svg)
+![dify-setup](./doc/img/dify-setup.svg)
 
 > [!TIP]
 > Dify にアップロード可能なファイルの上限サイズなどを変更する場合は、追加で [dify-self-hosted-on-aws/bin/cdk.ts](dify-self-hosted-on-aws/bin/cdk.ts) ファイルを以下のようにパラメータを設定します。（[参考](https://note.com/gamo_yoshihiro/n/n38562ebcdccb)）
