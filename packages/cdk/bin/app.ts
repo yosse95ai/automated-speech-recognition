@@ -22,7 +22,7 @@ export const props: EnvironmentProps = {
   useTranscribe: false,
   useBedrockAgents: false,
   useS3OnpremDirectly: false,
-  useR53ResolverEndpoint: false,
+  useR53ResolverEndpoint: true,
   useInternalNlb: false
 };
 

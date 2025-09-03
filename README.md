@@ -9,6 +9,9 @@
 > [!Important]
 > オンプレミスと接続する場合は、別途 Site-to-Site VPN などの設定をご自身で行なっていただく必要がございます。
 
+> [!Caution]
+> 本リポジトリを利用して発生した損害に対しましては、一切の責任を負いかねます。
+
 ## 前提条件
 - [Node.js](https://nodejs.org/en/download/) (v18 or newer)
 - [docker](https://docs.docker.com/get-docker/)
@@ -148,6 +151,31 @@ popd
 
 ![dify-setup](./doc/dify-setup.svg)
 
+> [!TIP]
+> Dify にアップロード可能なファイルの上限サイズなどを変更する場合は、追加で [dify-self-hosted-on-aws/bin/cdk.ts](dify-self-hosted-on-aws/bin/cdk.ts) ファイルを以下のようにパラメータを設定します。（[参考](https://note.com/gamo_yoshihiro/n/n38562ebcdccb)）
+> ```
+> export const props: EnvironmentProps = {
+>   // 上略。以下を設定。
+>   additionalEnvironmentVariables: [
+>     {
+>       key: 'UPLOAD_FILE_SIZE_LIMIT',
+>       value: '100',
+>     },
+>     {
+>       key: 'UPLOAD_VIDEO_FILE_SIZE_LIMIT',
+>       value: '2000',
+>     },
+>     {
+>       key: 'UPLOAD_AUDIO_FILE_SIZE_LIMIT',
+>       value: '1000',
+>     },
+>     {
+>       key: 'TEXT_GENERATION_TIMEOUT_MS',
+>       value: '1200000',
+>     },
+>   ],
+> };
+> ```
 
 ## エラー対応
 ### EC2 Instance (NAT Instance) のデプロイに失敗した場合
