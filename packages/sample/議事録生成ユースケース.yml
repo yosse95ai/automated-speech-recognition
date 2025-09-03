@@ -1,0 +1,1274 @@
+app:
+  description: 「音声書き起こし＋サマリー」で議事録作成を行うチャットフロー
+  icon: 🎵
+  icon_background: '#D5D9EB'
+  mode: advanced-chat
+  name: 議事録生成ユースケース(v2.1.1)
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/bedrock:0.0.24@d15b21a5f8833d2489cd336798188b929a9f86e1c05f2f4770c05fc3e1e991bf
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/aws_tools:0.0.6@6037f3c4cfc1ee904d0ef8e7cc6ac7a857f4f5dc463bd5254c2102c646a943f7
+kind: app
+version: 0.3.0
+workflow:
+  conversation_variables:
+  - description: 生成AIの出力が追記されていきます。
+    id: e3719798-c99b-481d-8d06-914c7aa8489b
+    name: smmary_output
+    selector:
+    - conversation
+    - smmary_output
+    value: ''
+    value_type: string
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 1000
+        batch_count_limit: 5
+        file_size_limit: 100
+        image_file_size_limit: 10
+        video_file_size_limit: 2000
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: true
+        loop_id: '17467837394160'
+        sourceType: loop-start
+        targetType: template-transform
+      id: 1746783739416start-source-1746783739416017467837394171-target
+      selected: false
+      source: 1746783739416start
+      sourceHandle: source
+      target: '1746783739416017467837394171'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: false
+        isInLoop: true
+        loop_id: '17467837394160'
+        sourceType: template-transform
+        targetType: llm
+      id: 1746783739416017467837394171-source-1746783739416017467837394170-target
+      selected: false
+      source: '1746783739416017467837394171'
+      sourceHandle: source
+      target: '1746783739416017467837394170'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: false
+        isInLoop: true
+        loop_id: '17467837394160'
+        sourceType: llm
+        targetType: variable-aggregator
+      id: 1746783739416017467837394170-source-1746783739416017467837394185-target
+      selected: false
+      source: '1746783739416017467837394170'
+      sourceHandle: source
+      target: '1746783739416017467837394185'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: false
+        isInLoop: true
+        loop_id: '17467837394160'
+        sourceType: llm
+        targetType: template-transform
+      id: 1746783739416017467837394170-fail-branch-1746783739416017467837394182-target
+      selected: false
+      source: '1746783739416017467837394170'
+      sourceHandle: fail-branch
+      target: '1746783739416017467837394182'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: false
+        isInLoop: true
+        loop_id: '17467837394160'
+        sourceType: template-transform
+        targetType: variable-aggregator
+      id: 1746783739416017467837394182-source-1746783739416017467837394185-target
+      selected: false
+      source: '1746783739416017467837394182'
+      sourceHandle: source
+      target: '1746783739416017467837394185'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: false
+        isInLoop: true
+        loop_id: '17467837394160'
+        sourceType: variable-aggregator
+        targetType: template-transform
+      id: 1746783739416017467837394185-source-1746783739416017467837394184-target
+      selected: false
+      source: '1746783739416017467837394185'
+      sourceHandle: source
+      target: '1746783739416017467837394184'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: false
+        isInLoop: true
+        loop_id: '17467837394160'
+        sourceType: template-transform
+        targetType: assigner
+      id: 1746783739416017467837394184-source-1746783739416017467837394183-target
+      selected: false
+      source: '1746783739416017467837394184'
+      sourceHandle: source
+      target: '1746783739416017467837394183'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInLoop: false
+        sourceType: loop
+        targetType: code
+      id: 17467837394160-source-17467862530800-target
+      selected: false
+      source: '17467837394160'
+      sourceHandle: source
+      target: '17467862530800'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: answer
+      id: 17467862530800-source-answer-target
+      selected: false
+      source: '17467862530800'
+      sourceHandle: source
+      target: answer
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: tool
+      id: 1746757653724-source-1751558951825-target
+      selected: false
+      source: '1746757653724'
+      sourceHandle: source
+      target: '1751558951825'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: if-else
+      id: 1751558951825-source-1752497658451-target
+      selected: false
+      source: '1751558951825'
+      sourceHandle: source
+      target: '1752497658451'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: loop
+      id: 1752497658451-ae0392dd-52b8-4ece-945d-3b2a1dc149fe-17467837394160-target
+      source: '1752497658451'
+      sourceHandle: ae0392dd-52b8-4ece-945d-3b2a1dc149fe
+      target: '17467837394160'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: answer
+      id: 1752497658451-false-1752497843837-target
+      source: '1752497658451'
+      sourceHandle: 'false'
+      target: '1752497843837'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: 開始
+        type: start
+        variables:
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - audio
+          - video
+          allowed_file_upload_methods:
+          - local_file
+          label: media
+          max_length: 48
+          options: []
+          required: true
+          type: file
+          variable: media
+      height: 89
+      id: '1746757653724'
+      position:
+        x: -590.3639507986328
+        y: 442
+      positionAbsolute:
+        x: -590.3639507986328
+        y: 442
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        answer: '{{#17467862530800.result#}}'
+        desc: ''
+        selected: false
+        title: 回答
+        type: answer
+        variables: []
+      height: 105
+      id: answer
+      position:
+        x: 1264.6455133577285
+        y: 442
+      positionAbsolute:
+        x: 1264.6455133577285
+        y: 442
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        break_conditions:
+        - comparison_operator: end with
+          id: 501498246ab846bdb900a83aa5426962
+          value: '[EOF]'
+          varType: string
+          variable_selector:
+          - conversation
+          - smmary_output
+        desc: 出力に[EOF]が含まれるまでループ (1)
+        error_handle_mode: terminated
+        height: 484
+        logical_operator: and
+        loop_count: 10
+        loop_variables: []
+        selected: false
+        start_node_id: 1746783739416start
+        title: 議事録生成ループ
+        type: loop
+        width: 716
+      height: 484
+      id: '17467837394160'
+      position:
+        x: 272.31232844627004
+        y: 442
+      positionAbsolute:
+        x: 272.31232844627004
+        y: 442
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 716
+      zIndex: 1
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1751558951825'
+          - text
+        desc: ''
+        error_strategy: fail-branch
+        isInIteration: false
+        isInLoop: true
+        loop_id: '17467837394160'
+        model:
+          completion_params:
+            cross-region: false
+            max_tokens: 4096
+            model_name: Claude 3.5 Sonnet
+          mode: chat
+          name: anthropic claude
+          provider: langgenius/bedrock/bedrock
+        prompt_template:
+        - id: 96ea64a4-49e5-4e12-843c-f8b299af591b
+          role: system
+          text: ''
+        - id: cf4a0db6-54b6-4baf-8b2a-53e96cadfbe2
+          role: user
+          text: '<input></input>の情報から<作成する文書の形式></作成する文書の形式>で与える指示に従って、指示された形式の文章のみを出力してください。それ以外の文言は一切出力してはいけません。例外はありません。
+
+            ただし、これ以上出力するものがない場合は、末尾に「[EOF]」を付与することのみ許可します。
+
+
+            <input>
+
+            {{#context#}}
+
+            </input>
+
+            <作成する文章の形式>
+
+            {{#1746783739416017467837394171.output#}}
+
+            </作成する文章の形式>
+
+            '
+        - id: 8b25d479-4fe6-43d4-a781-3602c5de520c
+          role: assistant
+          text: '{{#conversation.smmary_output#}}'
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        structured_output_enabled: false
+        title: LLM 2
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+            variable_selector:
+            - sys
+            - files
+          enabled: false
+      height: 155
+      id: '1746783739416017467837394170'
+      parentId: '17467837394160'
+      position:
+        x: 124.57142857142856
+        y: 172
+      positionAbsolute:
+        x: 396.8837570176986
+        y: 614
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    - data:
+        desc: 議事録生成
+        isInIteration: false
+        isInLoop: true
+        loop_id: '17467837394160'
+        selected: false
+        template: 'あなたは優秀な事務員です。
+
+          重要な会議に参加しました。
+
+          以下の指示に従い、事細かに記載する必要があります。
+
+
+          まずはじめにテーマ(#テーマ)に今回の会議内で上がったテーマを列挙してください。
+
+          テーマタグの内容ごとに、テンプレートタグ(<template></template>)にそって、会議で話したテーマごとに章立てし、「議論した詳細内容」、「質疑応答」、「決定事項」、「宿題事項」をそれぞれ詳細に記載しなければいけません。
+
+          テーマごとに、テンプレートタグの内容を繰り返す必要があります。
+
+
+          <template>
+
+          ## テーマ1のタイトル
+
+
+          ・議論した詳細内容
+
+
+          ・質疑応答
+
+
+          ・決定事項
+
+
+          ・宿題事項
+
+
+          </template>
+
+
+          必ず、<rule></rule>に従って作成してください。
+
+
+          <rule>
+
+          - 箇条書きは禁止。
+
+          - 各項目は詳細に出力してください。
+
+          - 文書の各項目については、関連する内容を余すことなく出力してください。
+
+          - 要約するのではなく要点をわかりやすくするのみで、省略しすぎないでください。
+
+          - 詳細な会話の内容も記載してください
+
+          - 文書は全て「である調」で記載してください。
+
+          - 「質疑応答」の内容は会話形式で記載してください。
+
+          - 「質疑応答」はそのまま記載してください。
+
+          - 「決定事項」は決定した項目とその根拠を必ず示してください。
+
+          - 「宿題事項」は余すことなく全て出力してください。
+
+          </rule>
+
+
+          議事録のサンプルをサンプルタグ(<sample></sample>)に示します。
+
+
+          <sample>
+
+          # テーマ
+
+          - テーマ1
+
+          - テーマ2
+
+
+          # 議事録
+
+          ## テーマ1
+
+
+          ・議論した詳細内容
+
+
+          ・質疑応答
+
+
+          ・決定事項
+
+
+          ・宿題事項
+
+
+          ## テーマ2
+
+
+          ・議論した詳細内容
+
+
+          ・質疑応答
+
+
+          ・決定事項
+
+
+          ・宿題事項
+
+
+          </sample>'
+        title: 生成AIへの指示文
+        type: template-transform
+        variables: []
+      height: 81
+      id: '1746783739416017467837394171'
+      parentId: '17467837394160'
+      position:
+        x: 128
+        y: 65
+      positionAbsolute:
+        x: 400.31232844627004
+        y: 507
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    - data:
+        desc: エラーメッセージ
+        isInIteration: false
+        isInLoop: true
+        loop_id: '17467837394160'
+        selected: false
+        template: '## エラー
+
+          議事録生成中にエラーが発生しました。
+
+          時間をおいて再実行してください。
+
+
+          エラータイプ：{{ error_type }}
+
+          エラー内容：
+
+          {{ error_message }}
+
+
+          [EOF]'
+        title: エラーテンプレート2
+        type: template-transform
+        variables:
+        - value_selector:
+          - '1746783739416017467837394170'
+          - error_type
+          variable: error_type
+        - value_selector:
+          - '1746783739416017467837394170'
+          - error_message
+          variable: error_message
+      height: 81
+      id: '1746783739416017467837394182'
+      parentId: '17467837394160'
+      position:
+        x: 121.85714285714278
+        y: 350.57142857142856
+      positionAbsolute:
+        x: 394.1694713034128
+        y: 792.5714285714286
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    - data:
+        desc: ''
+        isInIteration: false
+        isInLoop: true
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1746783739416017467837394184'
+          - output
+          variable_selector:
+          - conversation
+          - smmary_output
+          write_mode: over-write
+        loop_id: '17467837394160'
+        selected: false
+        title: LLM出力を変数代入2
+        type: assigner
+        version: '2'
+      height: 87
+      id: '1746783739416017467837394183'
+      parentId: '17467837394160'
+      position:
+        x: 422.4174203745031
+        y: 346.11513636066843
+      positionAbsolute:
+        x: 694.7297488207731
+        y: 788.1151363606684
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    - data:
+        desc: 過去の生成と今回の生成をマージ
+        isInIteration: false
+        isInLoop: true
+        loop_id: '17467837394160'
+        selected: false
+        template: '{{ pre }}
+
+          {{ text }}'
+        title: LLM出力マージ2
+        type: template-transform
+        variables:
+        - value_selector:
+          - conversation
+          - smmary_output
+          variable: pre
+        - value_selector:
+          - '1746783739416017467837394185'
+          - output
+          variable: text
+      height: 81
+      id: '1746783739416017467837394184'
+      parentId: '17467837394160'
+      position:
+        x: 423.76658763929277
+        y: 234.3444752675979
+      positionAbsolute:
+        x: 696.0789160855628
+        y: 676.3444752675979
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    - data:
+        advanced_settings:
+          group_enabled: false
+          groups:
+          - groupId: a604f8a8-0ed9-4c57-9444-792f0adcab6b
+            group_name: Group1
+            output_type: string
+            variables:
+            - - '1746757840322'
+              - output
+            - - '1746757721490'
+              - text
+        desc: ''
+        isInIteration: false
+        isInLoop: true
+        loop_id: '17467837394160'
+        output_type: string
+        selected: false
+        title: 変数集約器2
+        type: variable-aggregator
+        variables:
+        - - '1746783739416017467837394182'
+          - output
+        - - '1746783739416017467837394170'
+          - text
+      height: 129
+      id: '1746783739416017467837394185'
+      parentId: '17467837394160'
+      position:
+        x: 421.5048862375479
+        y: 67.4540361012323
+      positionAbsolute:
+        x: 693.817214683818
+        y: 509.4540361012323
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    - data:
+        desc: ''
+        isInLoop: true
+        selected: false
+        title: ''
+        type: loop-start
+      draggable: false
+      height: 48
+      id: 1746783739416start
+      parentId: '17467837394160'
+      position:
+        x: 24
+        y: 68
+      positionAbsolute:
+        x: 296.31232844627004
+        y: 510
+      selectable: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-loop-start
+      width: 44
+      zIndex: 1002
+    - data:
+        code: "\ndef main(arg1: str) -> dict:\n    return {\n        \"result\": arg1.removesuffix(\"\
+          [EOF]\").rstrip(\"\\\\n\"),\n    }\n"
+        code_language: python3
+        desc: ''
+        outputs:
+          result:
+            children: null
+            type: string
+        selected: false
+        title: '[EOF] の削除2'
+        type: code
+        variables:
+        - value_selector:
+          - conversation
+          - smmary_output
+          variable: arg1
+      height: 53
+      id: '17467862530800'
+      position:
+        x: 993.9107587457452
+        y: 442
+      positionAbsolute:
+        x: 993.9107587457452
+        y: 442
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        author: Yoshimura
+        desc: ''
+        height: 570
+        selected: false
+        showAuthor: false
+        text: '{"root":{"children":[{"children":[{"detail":0,"format":1,"mode":"normal","style":"font-size:
+          16px;","text":"議事録生成","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":1,"textStyle":"font-size:
+          16px;"}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}'
+        theme: pink
+        title: ' (1)'
+        type: ''
+        width: 988
+      height: 570
+      id: '17467884884860'
+      position:
+        x: 260.7032555778035
+        y: 387.984152611534
+      positionAbsolute:
+        x: 260.7032555778035
+        y: 387.984152611534
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-note
+      width: 988
+    - data:
+        author: Yoshimura
+        desc: ''
+        height: 208
+        selected: false
+        showAuthor: false
+        text: '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"font-size:
+          14px;","text":"⚠️","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":"font-size:
+          14px;"},{"children":[{"detail":0,"format":0,"mode":"normal","style":"font-size:
+          14px;","text":"LLMノードで finish_reason を受け取ることができないため、LLMに終了か継続かを判断させ、出力終了の場合、[EOF]と出力させることによってループ終了を判定しています。","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":"font-size:
+          14px;"},{"children":[{"detail":0,"format":0,"mode":"normal","style":"font-size:
+          14px;","text":"将来的には、finish_reason=''max_tokens'' である限り出力を続けるようにループを制御するべきである。","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":"font-size:
+          14px;"}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}'
+        theme: green
+        title: ''
+        type: ''
+        width: 347
+      height: 208
+      id: '1746788610858'
+      position:
+        x: 1001.9900729695099
+        y: 708.7575791922321
+      positionAbsolute:
+        x: 1001.9900729695099
+        y: 708.7575791922321
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-note
+      width: 347
+    - data:
+        desc: ''
+        is_team_authorization: true
+        output_schema: null
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: video or audio file url for transcribe
+            ja_JP: video or audio file url for transcribe
+            pt_BR: video or audio file url for transcribe
+            zh_Hans: 语音或者视频文件url
+          label:
+            en_US: video or audio file url for transcribe
+            ja_JP: video or audio file url for transcribe
+            pt_BR: video or audio file url for transcribe
+            zh_Hans: 语音或者视频文件url
+          llm_description: video or audio file url for transcribe
+          max: null
+          min: null
+          name: file_url
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: The language code used to create your transcription job.  refer
+              to :https://docs.aws.amazon.com/transcribe/latest/dg/supported-languages.html
+            ja_JP: The language code used to create your transcription job.  refer
+              to :https://docs.aws.amazon.com/transcribe/latest/dg/supported-languages.html
+            pt_BR: The language code used to create your transcription job.  refer
+              to :https://docs.aws.amazon.com/transcribe/latest/dg/supported-languages.html
+            zh_Hans: 语言编码,例如zh-CN, en-US 可参考 https://docs.aws.amazon.com/transcribe/latest/dg/supported-languages.html
+          label:
+            en_US: Language Code
+            ja_JP: Language Code
+            pt_BR: Language Code
+            zh_Hans: 语言编码
+          llm_description: The language code used to create your transcription job.
+          max: null
+          min: null
+          name: language_code
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: 1
+          form: form
+          human_description:
+            en_US: Automactically Identify Language
+            ja_JP: Automactically Identify Language
+            pt_BR: Automactically Identify Language
+            zh_Hans: 自动识别语言
+          label:
+            en_US: Automactically Identify Language
+            ja_JP: Automactically Identify Language
+            pt_BR: Automactically Identify Language
+            zh_Hans: 自动识别语言
+          llm_description: Enable Automactically Identify Language
+          max: null
+          min: null
+          name: identify_language
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: boolean
+        - auto_generate: null
+          default: null
+          form: form
+          human_description:
+            en_US: Automactically Identify Multiple Languages
+            ja_JP: Automactically Identify Multiple Languages
+            pt_BR: Automactically Identify Multiple Languages
+            zh_Hans: 自动识别多种语言
+          label:
+            en_US: Automactically Identify Multiple Languages
+            ja_JP: Automactically Identify Multiple Languages
+            pt_BR: Automactically Identify Multiple Languages
+            zh_Hans: 自动识别多种语言
+          llm_description: Enable Automactically Identify Multiple Languages
+          max: null
+          min: null
+          name: identify_multiple_languages
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: boolean
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Seperated by |, e.g:zh-CN|en-US, You can specify two or more language
+              codes that represent the languages you think may be present in your
+              media
+            ja_JP: Seperated by |, e.g:zh-CN|en-US, You can specify two or more language
+              codes that represent the languages you think may be present in your
+              media
+            pt_BR: Seperated by |, e.g:zh-CN|en-US, You can specify two or more language
+              codes that represent the languages you think may be present in your
+              media
+            zh_Hans: 您可以指定两个或更多的语言代码来表示您认为可能出现在媒体中的语言。用｜分隔,如 zh-CN|en-US
+          label:
+            en_US: Language Options
+            ja_JP: Language Options
+            pt_BR: Language Options
+            zh_Hans: 语言种类选项
+          llm_description: Seperated by |, e.g:zh-CN|en-US, You can specify two or
+            more language codes that represent the languages you think may be present
+            in your media
+          max: null
+          min: null
+          name: language_options
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: form
+          human_description:
+            en_US: s3 bucket name to store transcribe files  (don't add prefix s3://)
+            ja_JP: s3 bucket name to store transcribe files  (don't add prefix s3://)
+            pt_BR: s3 bucket name to store transcribe files  (don't add prefix s3://)
+            zh_Hans: s3 存储桶名称,用于存储转录文件  (不需要前缀 s3://)
+          label:
+            en_US: s3 bucket name
+            ja_JP: s3 bucket name
+            pt_BR: s3 bucket name
+            zh_Hans: s3 存储桶名称
+          llm_description: s3 bucket name to store transcribe files
+          max: null
+          min: null
+          name: s3_bucket_name
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: 1
+          form: form
+          human_description:
+            en_US: Enables speaker partitioning (diarization) in your transcription
+              output
+            ja_JP: Enables speaker partitioning (diarization) in your transcription
+              output
+            pt_BR: Enables speaker partitioning (diarization) in your transcription
+              output
+            zh_Hans: 在转录输出中启用说话人分区（说话人分离）
+          label:
+            en_US: ShowSpeakerLabels
+            ja_JP: ShowSpeakerLabels
+            pt_BR: ShowSpeakerLabels
+            zh_Hans: 显示说话人标签
+          llm_description: Enables speaker partitioning (diarization) in your transcription
+            output
+          max: null
+          min: null
+          name: ShowSpeakerLabels
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: boolean
+        - auto_generate: null
+          default: 2
+          form: form
+          human_description:
+            en_US: Specify the maximum number of speakers you want to partition in
+              your media
+            ja_JP: Specify the maximum number of speakers you want to partition in
+              your media
+            pt_BR: Specify the maximum number of speakers you want to partition in
+              your media
+            zh_Hans: 指定您希望在媒体中划分的最多演讲者数量。
+          label:
+            en_US: MaxSpeakerLabels
+            ja_JP: MaxSpeakerLabels
+            pt_BR: MaxSpeakerLabels
+            zh_Hans: 说话人标签数量
+          llm_description: Specify the maximum number of speakers you want to partition
+            in your media
+          max: null
+          min: null
+          name: MaxSpeakerLabels
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: number
+        - auto_generate: null
+          default: null
+          form: form
+          human_description:
+            en_US: Please enter the AWS region for the transcribe service, for example
+              'us-east-1'.
+            ja_JP: Please enter the AWS region for the transcribe service, for example
+              'us-east-1'.
+            pt_BR: Please enter the AWS region for the transcribe service, for example
+              'us-east-1'.
+            zh_Hans: 请输入Transcribe的 AWS 区域，例如 'us-east-1'。
+          label:
+            en_US: AWS Region
+            ja_JP: AWS Region
+            pt_BR: AWS Region
+            zh_Hans: AWS 区域
+          llm_description: Please enter the AWS region for the transcribe service,
+            for example 'us-east-1'.
+          max: null
+          min: null
+          name: aws_region
+          options: []
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        params:
+          MaxSpeakerLabels: ''
+          ShowSpeakerLabels: ''
+          aws_region: ''
+          file_url: ''
+          identify_language: ''
+          identify_multiple_languages: ''
+          language_code: ''
+          language_options: ''
+          s3_bucket_name: ''
+        provider_id: langgenius/aws_tools/aws_tools
+        provider_name: langgenius/aws_tools/aws_tools
+        provider_type: builtin
+        selected: false
+        title: TranscribeASR
+        tool_configurations:
+          MaxSpeakerLabels: 2
+          ShowSpeakerLabels: 0
+          aws_region: ap-northeast-1
+          identify_language: 0
+          identify_multiple_languages: 0
+          s3_bucket_name: difyonawsstack-storagebucket19dxxxxxxxx
+        tool_description: A tool for ASR (Automatic Speech Recognition) - https://github.com/aws-samples/dify-aws-tool
+        tool_label: TranscribeASR
+        tool_name: transcribe_asr
+        tool_parameters:
+          file_url:
+            type: mixed
+            value: '{{#1746757653724.media.url#}}'
+          language_code:
+            type: mixed
+            value: ja-JP
+        type: tool
+      height: 219
+      id: '1751558951825'
+      position:
+        x: -292.59152445064575
+        y: 442
+      positionAbsolute:
+        x: -292.59152445064575
+        y: 442
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        cases:
+        - case_id: ae0392dd-52b8-4ece-945d-3b2a1dc149fe
+          conditions:
+          - comparison_operator: not contains
+            id: 7baf8186-b0a0-4fed-8137-cc1b073e7333
+            value: 404 Client Error
+            varType: string
+            variable_selector:
+            - '1751558951825'
+            - text
+          id: ae0392dd-52b8-4ece-945d-3b2a1dc149fe
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: IF/ELSE
+        type: if-else
+      height: 125
+      id: '1752497658451'
+      position:
+        x: -4.7661895412140325
+        y: 442
+      positionAbsolute:
+        x: -4.7661895412140325
+        y: 442
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        answer: '{{#1751558951825.text#}}'
+        desc: ''
+        selected: false
+        title: 回答 2
+        type: answer
+        variables: []
+      height: 105
+      id: '1752497843837'
+      position:
+        x: -11.061981057391904
+        y: 588.2649743547721
+      positionAbsolute:
+        x: -11.061981057391904
+        y: 588.2649743547721
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        author: Yoshimura
+        desc: ''
+        height: 570
+        selected: false
+        showAuthor: false
+        text: '{"root":{"children":[{"children":[{"detail":0,"format":1,"mode":"normal","style":"font-size:
+          16px;","text":"音声書き起こし","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":1,"textStyle":"font-size:
+          16px;"}],"direction":"ltr","format":"","indent":0,"type":"root","version":1,"textFormat":1,"textStyle":"font-size:
+          16px;"}}'
+        theme: blue
+        title: '  (2)'
+        type: ''
+        width: 582
+      height: 570
+      id: '17532484350330'
+      position:
+        x: -332.323137807097
+        y: 387.984152611534
+      positionAbsolute:
+        x: -332.323137807097
+        y: 387.984152611534
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-note
+      width: 582
+    - data:
+        author: Yoshimura
+        desc: ''
+        height: 104
+        selected: false
+        showAuthor: false
+        text: '{"root":{"children":[{"children":[{"detail":0,"format":1,"mode":"normal","style":"font-size:
+          14px;","text":"エラー処理","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":1,"textStyle":"font-size:
+          14px;"},{"children":[{"detail":0,"format":0,"mode":"normal","style":"font-size:
+          14px;","text":"Transcribe自体がClient Errorの場合は後続のLLMの処理は走らせない","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textStyle":"font-size:
+          14px;","textFormat":0}],"direction":"ltr","format":"","indent":0,"type":"root","version":1,"textStyle":"font-size:
+          14px;"}}'
+        theme: green
+        title: ' (1)'
+        type: ''
+        width: 262
+      height: 104
+      id: '17532492784700'
+      position:
+        x: -36.10987616806352
+        y: 708.7575791922321
+      positionAbsolute:
+        x: -36.10987616806352
+        y: 708.7575791922321
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-note
+      width: 262
+    - data:
+        author: Yoshimura
+        desc: ''
+        height: 91
+        selected: false
+        showAuthor: false
+        text: '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"font-size:
+          14px;","text":"「生成AIへの指示文」内部にプロンプトを記載してください。","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textStyle":"font-size:
+          14px;","textFormat":0},{"children":[{"detail":0,"format":0,"mode":"normal","style":"font-size:
+          14px;","text":"その内容が生成AIへの指示になります。","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textStyle":"font-size:
+          14px;","textFormat":0}],"direction":"ltr","format":"","indent":0,"type":"root","version":1,"textStyle":"font-size:
+          14px;"}}'
+        theme: violet
+        title: ''
+        type: ''
+        width: 470
+      height: 91
+      id: '1753751778997'
+      position:
+        x: 260.7032555778035
+        y: 275.7530120739352
+      positionAbsolute:
+        x: 260.7032555778035
+        y: 275.7530120739352
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-note
+      width: 470
+    - data:
+        author: Yoshimura
+        desc: ''
+        height: 362
+        selected: false
+        showAuthor: false
+        text: '{"root":{"children":[{"children":[{"detail":0,"format":1,"mode":"normal","style":"font-size:
+          14px;","text":"AWS Tools v0.0.6 の TranscribeASR を利用した例","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":1,"textStyle":"font-size:
+          14px;"},{"children":[],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""},{"children":[{"detail":0,"format":0,"mode":"normal","style":"font-size:
+          14px;","text":"入力変数：開始ノードの media の url を参照させる","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textStyle":"font-size:
+          14px;","textFormat":0},{"children":[{"detail":0,"format":0,"mode":"normal","style":"font-size:
+          14px;","text":"ローカルアップロードしたファイルがここに入る。","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textStyle":"font-size:
+          14px;","textFormat":0},{"children":[],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""},{"children":[{"detail":0,"format":0,"mode":"normal","style":"font-size:
+          14px;","text":"Language Code：ja-JP","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textStyle":"font-size:
+          14px;","textFormat":0},{"children":[],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""},{"children":[{"detail":0,"format":0,"mode":"normal","style":"font-size:
+          14px;","text":"S3 Bucket：Dify on AWS をデプロイした際に自動生成されたバケット名を記載","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textStyle":"font-size:
+          14px;","textFormat":0},{"children":[{"detail":0,"format":0,"mode":"normal","style":"font-size:
+          14px;","text":"AWSアカウントにログインすることで参照可能。","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textStyle":"font-size:
+          14px;","textFormat":0},{"children":[{"detail":0,"format":0,"mode":"normal","style":"font-size:
+          14px;","text":"例：difyonawsstack-storagebucket19dxxxxxxxx","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textStyle":"font-size:
+          14px;","textFormat":0},{"children":[],"direction":null,"format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""},{"children":[{"detail":0,"format":0,"mode":"normal","style":"font-size:
+          14px;","text":"AWS Region：ap-northeast-1","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textStyle":"font-size:
+          14px;","textFormat":0},{"children":[],"direction":null,"format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""},{"children":[{"detail":0,"format":0,"mode":"normal","style":"font-size:
+          14px;","text":"＊API での呼び出し方法は、「公開する」ボタンから辿れる「APIリファレンス」を参照ください。","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textStyle":"font-size:
+          14px;","textFormat":0}],"direction":"ltr","format":"","indent":0,"type":"root","version":1,"textFormat":1,"textStyle":"font-size:
+          14px;"}}'
+        theme: violet
+        title: ''
+        type: ''
+        width: 581
+      height: 362
+      id: '1753768982437'
+      position:
+        x: -332.323137807097
+        y: 6.001144946237758
+      positionAbsolute:
+        x: -332.323137807097
+        y: 6.001144946237758
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom-note
+      width: 581
+    viewport:
+      x: 606.1633698194045
+      y: 73.83538291421144
+      zoom: 0.7080301126221846
