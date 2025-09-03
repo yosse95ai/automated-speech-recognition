@@ -17,6 +17,25 @@ export const props: EnvironmentProps = {
 };
 ```
 
+> [!Note]
+> Dify に固定 IP でアクセする場合、追加で [dify-self-hosted-on-aws/bin/cdk.ts](dify-self-hosted-on-aws/bin/cdk.ts) ファイルを以下のようにパラメータを設定します。（[参考](https://note.com/gamo_yoshihiro/n/n38562ebcdccb)）
+> ```ts
+> export const props: EnvironmentProps = {
+>   // 上略。以下を設定。
+>   additionalEnvironmentVariables: [
+>     // 中略
+>     {
+>       key: 'APP_API_URL',
+>       value: '',
+>     },
+>     {
+>       key: 'CONSOLE_API_URL',
+>       value: '',
+>     },
+>   ],
+> };
+> ```
+
 ### 1.2 デプロイ実行
 
 ```bash
