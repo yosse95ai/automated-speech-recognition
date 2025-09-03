@@ -1,0 +1,287 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: CSV 抽出サンプル
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/bedrock:0.0.24@d15b21a5f8833d2489cd336798188b929a9f86e1c05f2f4770c05fc3e1e991bf
+kind: app
+version: 0.3.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 1000
+        batch_count_limit: 5
+        file_size_limit: 100
+        image_file_size_limit: 10
+        video_file_size_limit: 2000
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: document-extractor
+      id: 1752115182487-source-1752541446777-target
+      selected: false
+      source: '1752115182487'
+      sourceHandle: source
+      target: '1752541446777'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1753257475641-source-1752541496367-target
+      source: '1753257475641'
+      sourceHandle: source
+      target: '1752541496367'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: document-extractor
+        targetType: llm
+      id: 1752541446777-source-1753257475641-target
+      source: '1752541446777'
+      sourceHandle: source
+      target: '1753257475641'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1753257475641-fail-branch-1753257837177-target
+      source: '1753257475641'
+      sourceHandle: fail-branch
+      target: '1753257837177'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: 開始
+        type: start
+        variables:
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          hide: false
+          label: csvfile
+          max_length: 10
+          options: []
+          required: true
+          type: file
+          variable: csvfile
+      height: 89
+      id: '1752115182487'
+      position:
+        x: 80
+        y: 282
+      positionAbsolute:
+        x: 80
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        is_array_file: false
+        selected: false
+        title: テキスト抽出
+        type: document-extractor
+        variable_selector:
+        - '1752115182487'
+        - csvfile
+      height: 91
+      id: '1752541446777'
+      position:
+        x: 382.96669029450015
+        y: 282
+      positionAbsolute:
+        x: 382.96669029450015
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1753257475641'
+          - text
+          variable: output
+        selected: false
+        title: 終了
+        type: end
+      height: 89
+      id: '1752541496367'
+      position:
+        x: 965.8116704106885
+        y: 282
+      positionAbsolute:
+        x: 965.8116704106885
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        author: Yoshimura
+        desc: ''
+        height: 88
+        selected: false
+        showAuthor: false
+        text: '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"生成AIの処理などをテキスト抽出の後ろに繋げていく","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}'
+        theme: blue
+        title: ''
+        type: ''
+        width: 240
+      height: 88
+      id: '1753257332055'
+      position:
+        x: 679.7412730147521
+        y: 169.17505057140147
+      positionAbsolute:
+        x: 679.7412730147521
+        y: 169.17505057140147
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-note
+      width: 240
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1752541446777'
+          - text
+        desc: ''
+        error_strategy: fail-branch
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: anthropic claude
+          provider: langgenius/bedrock/bedrock
+        prompt_template:
+        - id: 3b24f665-b76f-485b-bb07-b64fd9119a72
+          role: system
+          text: 'CSV の内容を csvタグ (<csv></csv>)に示す。
+
+            '
+        - id: 1bbcc3d0-29ea-4364-ae7d-41746b1865a5
+          role: user
+          text: '内容をサマリーせよ。
+
+
+            <csv>
+
+            {{#context#}}
+
+            </csv>'
+        selected: false
+        title: LLM
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 125
+      id: '1753257475641'
+      position:
+        x: 686.3944960903345
+        y: 282
+      positionAbsolute:
+        x: 686.3944960903345
+        y: 282
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1753257475641'
+          - error_message
+          variable: output
+        selected: false
+        title: 終了 2
+        type: end
+      height: 89
+      id: '1753257837177'
+      position:
+        x: 965.8116704106885
+        y: 410
+      positionAbsolute:
+        x: 965.8116704106885
+        y: 410
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: 66.99125456684624
+      y: -39.89466649639036
+      zoom: 0.9018185519767288
