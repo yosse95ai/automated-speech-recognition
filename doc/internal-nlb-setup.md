@@ -2,7 +2,7 @@
 
 ## 概要
 
-この手順書では、Dify ALB の前段に Internal Network Load Balancer（NLB）を配置し、VPC 内からのアクセスを提供する設定方法を説明します。
+この手順書では、Dify ALB の前段に Internal Network Load Balancer（NLB）を配置し、閉域網内からのアクセスを提供する設定方法を説明します。
 
 ![NLB](./img/architecture-nlb.svg)
 
