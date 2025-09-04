@@ -177,6 +177,11 @@ popd
 > };
 > ```
 
+## リソース
+- [Windows EC2 インスタンスでデバッグをする方法](doc/WindowsEC2.md)
+- [Internal NLB for Dify 設定手順書](doc/internal-nlb-setup.md)
+- [Amazon Transcribe を利用して音声書き起こしを行う](doc/useTranscribe.md)
+
 ## エラー対応
 ### EC2 Instance (NAT Instance) のデプロイに失敗した場合
 AWS アカウントによっては、Validation エラーが発生する場合があります。お手数ですが、1度スタックを全て削除してから数分間隔を空けてデプロイを再実行してください。
