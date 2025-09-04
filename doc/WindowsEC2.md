@@ -10,7 +10,7 @@
 
 ## 前提
 - ローカルコンピュータに [AWS CLI がインストール](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/getting-started-install.html)されていること
-- ローカルコンピュータに Windows Apps などのリモートデスクトップアプリケーションがインストールされていること
+- ローカルコンピュータに [Windows App](https://apps.microsoft.com/detail/9n1f85v9t8bn?hl=ja-JP&gl=JP) などのリモートデスクトップアプリケーションがインストールされていること
 - ローカルコンピュータがインターネットに接続していること
 
 ## 手順
