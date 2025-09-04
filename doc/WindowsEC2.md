@@ -6,21 +6,21 @@
 3. OnpremVPC内のプライベートサブネットにWindows Serverインスタンス
 4. EC2インスタンスコネクトエンドポイント（インスタンスへのRDP接続用）
 
-![debugMode: true](./debug-true.svg)
+![debugMode: true](./img/debug-true.svg)
 
 このモードではデプロイ後に以下を行う必要があります。以下のセットアップをマネジメントコンソール上で行うことにより、検証用 EC2 (Windows Server) から S3 や Transcribe、Dify への VPC を跨いだ通信ができるようになります。
 
 1. Peeringごとのルートテーブルの設定
     - OnpremVPC のルートテーブル 1 つ編集 (s3asr-Onprem-private-subnet-1)
-    ![alt text](rtb-onprem.png) 
+    ![alt text](./img/rtb-onprem.png) 
     - API VPC のルートテーブル 2 つ編集 (s3asr-Api-private-subnet-{1,2})
-    ![alt text](rtb-api.png)
+    ![alt text](./img/rtb-api.png)
 2. DHCPオプションセットを作成
     - CDKで作成された[Route 53 インバウンドエンドポイントのIP](https://ap-northeast-1.console.aws.amazon.com/route53resolver/home?region=ap-northeast-1#/inbound-endpoints)を確認し、新規のDHCPオプションを作成時、ドメインネームサーバーの部分に登録
-    ![alt text](dhcp-op.png)
+    ![alt text](./img/dhcp-op.png)
 3. OnpremVPC の DHCP オプションを作成したものに変更
     - 「VPC > VPCの設定を編集」からDHCP設定を変更
-    ![alt text](dhcp.png)
+    ![alt text](./img/dhcp.png)
 
 ## Windows Serverインスタンスへの RDP トンネル確立
 

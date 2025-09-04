@@ -153,7 +153,7 @@ popd
 
 > [!TIP]
 > Dify にアップロード可能なファイルの上限サイズなどを変更する場合は、追加で [dify-self-hosted-on-aws/bin/cdk.ts](dify-self-hosted-on-aws/bin/cdk.ts) ファイルを以下のようにパラメータを設定します。（[参考](https://note.com/gamo_yoshihiro/n/n38562ebcdccb)）
-> ```
+> ```ts
 > export const props: EnvironmentProps = {
 >   // 上略。以下を設定。
 >   additionalEnvironmentVariables: [
