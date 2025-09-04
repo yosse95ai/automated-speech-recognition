@@ -8,6 +8,13 @@
 
 ![debugMode: true](./img/debug-true.svg)
 
+## 前提
+- ローカルコンピュータに [AWS CLI がインストール](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/getting-started-install.html)されていること
+- ローカルコンピュータに Windows Apps などのリモートデスクトップアプリケーションがインストールされていること
+- ローカルコンピュータがインターネットに接続していること
+
+## 手順
+
 このモードではデプロイ後に以下を行う必要があります。以下のセットアップをマネジメントコンソール上で行うことにより、検証用 EC2 (Windows Server) から S3 や Transcribe、Dify への VPC を跨いだ通信ができるようになります。
 
 1. Peeringごとのルートテーブルの設定
