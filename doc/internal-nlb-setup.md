@@ -4,6 +4,8 @@
 
 この手順書では、Dify ALB の前段に Internal Network Load Balancer（NLB）を配置し、VPC 内からのアクセスを提供する設定方法を説明します。
 
+![NLB](./img/architecture-nlb.svg)
+
 ## 1. CDK デプロイ手順
 
 ### 1.1 設定変更

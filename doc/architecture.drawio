@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram name="構成図" id="scLz5ZwG_OTEOcT2iZyq">
-        <mxGraphModel dx="3066" dy="874" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="#ffffff" math="0" shadow="0">
+        <mxGraphModel dx="2318" dy="691" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="#ffffff" math="0" shadow="0">
             <root>
                 <mxCell id="-Op6rsn55f1ckGNEvmAQ-0"/>
                 <mxCell id="-Op6rsn55f1ckGNEvmAQ-1" style="" parent="-Op6rsn55f1ckGNEvmAQ-0"/>
@@ -247,7 +247,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="構成図(ver.NLB)" id="jzDUUKkWvensGG3T-Bm-">
-        <mxGraphModel dx="2366" dy="874" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="850" background="#ffffff" math="0" shadow="0">
+        <mxGraphModel dx="1619" dy="921" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="850" background="#ffffff" math="0" shadow="0">
             <root>
                 <mxCell id="ikTqTAj7KZyvWBbTQEni-0"/>
                 <mxCell id="ikTqTAj7KZyvWBbTQEni-1" style="locked=1;" parent="ikTqTAj7KZyvWBbTQEni-0"/>
