@@ -33,7 +33,7 @@ const app = new cdk.App();
 const validatedProps = environmentSchema.parse(props);
 
 // Deploy the unified stack with both VPCs and EC2 instance
-new MainAppStack(app, 'PrivateDifyNetworkStack', {
+new MainAppStack(app, 'S3AsrStack', {
   env: { region: validatedProps.awsRegion, account: validatedProps.awsAccount },
   ...validatedProps
 });
