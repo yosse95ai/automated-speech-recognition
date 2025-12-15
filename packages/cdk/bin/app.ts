@@ -29,7 +29,7 @@ export const props: EnvironmentProps = {
 const app = new cdk.App();
 
 // Deploy the unified stack with both VPCs and EC2 instance
-new MainAppStack(app, 'S3AsrStack', {
+new MainAppStack(app, 'PrivateDifyNetworkStack', {
   env: { region: props.awsRegion, account: props.awsAccount },
   ...props
 });
