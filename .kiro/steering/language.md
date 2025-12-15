@@ -1,13 +1,33 @@
 ---
-includes: always
+inclusion: always
 ---
 
-# 言語設定
-- 日本語で必ず答える
+# Git Commit Message Conventions
 
-# 文章ファイル作成時のトーンマナー
-- 半角英数字と日本語の間には半角スペースを開けること
-    - e.g. ABC あいうえお 123 かきくけこ
-- かぎ括弧("「", "」")、句読点("、", "。")の前後に半角英数字がある場合は、半角スペースは不要
-    - e.g. 「Hello is こんちにわ」といわれました。Hello を利用したい。
-- そのほかは世間一般的な記述のルールに従うこと
+## Language
+All commit messages must be written in Japanese (日本語).
+
+## Commit Message Format
+Use emoji prefixes to categorize commits:
+
+- 🐛 `:bug:` - バグ修正 (Bug fixes)
+- 👍 `:+1:` - 機能改善 (Feature improvements)
+- ✨ `:sparkles:` - 部分的な機能追加 (Partial feature additions)
+- 🎉 `:tada:` - 盛大に祝うべき大きな機能追加 (Major feature additions)
+- ♻️ `:recycle:` - リファクタリング (Refactoring)
+- 🚿 `:shower:` - 不要な機能・使われなくなった機能の削除 (Removing deprecated features)
+- 💚 `:green_heart:` - テストやCIの修正・改善 (Test/CI fixes and improvements)
+- 👕 `:shirt:` - Lintエラーの修正やコードスタイルの修正 (Lint/style fixes)
+- 🚀 `:rocket:` - パフォーマンス改善 (Performance improvements)
+- 🆙 `:up:` - 依存パッケージなどのアップデート (Dependency updates)
+- 🔒 `:lock:` - 新機能の公開範囲の制限 (Feature access restrictions)
+- 👮 `:cop:` - セキュリティ関連の改善 (Security improvements)
+- 📋 `:clipboard:` - ドキュメント作成・更新 (Documentation)
+
+末尾に `(#Issue number)` として、現在取り組み中のイシュー番号を付与すること。
+
+## Usage
+When creating commits, select the appropriate emoji prefix and write the message in Japanese. Example:
+```
+✨ ユーザー認証機能を追加 (#1)
+```
