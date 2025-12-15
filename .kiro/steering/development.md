@@ -1,5 +1,5 @@
 ---
-includes: always
+inclusion: always
 ---
 
 以下に必ず従ってください。
