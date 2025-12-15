@@ -4,6 +4,7 @@ import { Construct } from 'constructs';
 
 export interface VpcProps {
   cidr: string;
+  subnetMask: number,
   name: string;
   difySetup?: boolean; // difySetup パラメータを追加
 }
@@ -16,6 +17,7 @@ export class Vpc extends Construct {
   constructor(scope: Construct, id: string, props: VpcProps) {
     super(scope, id);
 
+    const subnetMask = props.subnetMask
     const natInstance = ec2.NatProvider.instanceV2({
       instanceType: ec2.InstanceType.of(
         ec2.InstanceClass.T4G,
@@ -32,12 +34,12 @@ export class Vpc extends Construct {
         {
           name: `${props.name.toLowerCase()}-private`,
           subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
-          cidrMask: 24,
+          cidrMask: subnetMask,
         },
         {
           name: `${props.name.toLowerCase()}-public`,
           subnetType: ec2.SubnetType.PUBLIC,
-          cidrMask: 24,
+          cidrMask: subnetMask,
           mapPublicIpOnLaunch: true,
         },
       ],
