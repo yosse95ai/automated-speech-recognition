@@ -16,20 +16,14 @@ export class Vpc extends Construct {
   constructor(scope: Construct, id: string, props: VpcProps) {
     super(scope, id);
 
-    const natConfig = props.difySetup
-      ? {
-          natGatewayProvider: ec2.NatProvider.instanceV2({
-            instanceType: ec2.InstanceType.of(
-              ec2.InstanceClass.T4G,
-              ec2.InstanceSize.NANO
-            ),
-            associatePublicIpAddress: true,
-          }),
-          natGateways: 1,
-        }
-      : {
-          natGateways: 0,
-        };
+    const natInstance = ec2.NatProvider.instanceV2({
+      instanceType: ec2.InstanceType.of(
+        ec2.InstanceClass.T4G,
+        ec2.InstanceSize.NANO
+      ),
+      associatePublicIpAddress: true,
+      defaultAllowedTraffic: ec2.NatTrafficDirection.OUTBOUND_ONLY,
+    });
 
     this.vpc = new ec2.Vpc(this, `${props.name}VPC`, {
       ipAddresses: ec2.IpAddresses.cidr(props.cidr),
@@ -47,9 +41,16 @@ export class Vpc extends Construct {
           mapPublicIpOnLaunch: true,
         },
       ],
-      ...(natConfig),
+      natGatewayProvider: props.difySetup ? natInstance : undefined,
+      natGateways: props.difySetup ? 1 : 0,
       restrictDefaultSecurityGroup: false,
     });
+    
+    natInstance?.securityGroup.addIngressRule(
+      ec2.Peer.ipv4(this.vpc.vpcCidrBlock),
+      ec2.Port.allTraffic()
+    );
+    
     cdk.Tags.of(this.vpc).add("Name", `s3asr-${props.name}VPC`);
 
     this.privateSubnets = this.vpc.privateSubnets;
