@@ -18,6 +18,7 @@ describe('MainAppStack NLB Integration', () => {
       bucketName: 'test-bucket',
       apiVpcCidr: '10.0.0.0/16',
       onpremiseCidr: '10.128.0.0/16',
+      apiVpcSubnetCidr: 24,
       debugMode: false,
       difySetup: false,
       useTranscribe: false,
@@ -52,6 +53,7 @@ describe('MainAppStack NLB Integration', () => {
       bucketName: 'test-bucket',
       apiVpcCidr: '10.0.0.0/16',
       onpremiseCidr: '10.128.0.0/16',
+      apiVpcSubnetCidr: 24,
       debugMode: false,
       difySetup: false,
       useTranscribe: false,
@@ -77,6 +79,7 @@ describe('MainAppStack NLB Integration', () => {
       bucketName: 'test-bucket',
       apiVpcCidr: '10.0.0.0/16',
       onpremiseCidr: '10.128.0.0/16',
+      apiVpcSubnetCidr: 24,
       debugMode: true, // デバッグモード有効
       difySetup: false,
       useTranscribe: false,
