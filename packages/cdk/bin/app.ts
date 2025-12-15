@@ -9,8 +9,8 @@ export const props: EnvironmentProps = {
   awsRegion: "ap-northeast-1",
   awsAccount: process.env.CDK_DEFAULT_ACCOUNT!,
   bucketName: "s3-asr-bucket",
-  apiVpcCidr: "10.0.0.0/24",
-  apiVpcSubnetCidr: 26,
+  apiVpcCidr: "10.0.0.0/16",
+  apiVpcSubnetCidr: 24,
   onpremiseCidr: "10.128.0.0/16",
 
   // true if you are deploying and/or setting up a dify package for the first time
