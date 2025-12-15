@@ -13,6 +13,7 @@ import { Vpc as ApiVpcConstruct } from "./constructor/api/vpc";
 import { Ec2Instance } from "./constructor/onprem/ec2-instance";
 import { Vpc as OnpremVpcConstruct } from "./constructor/onprem/vpc";
 import { VpcPeering } from "./constructor/vpc-peering";
+import { EnvironmentValidator } from "./validators/environment-validator";
 
 export interface MainAppStackProps
   extends cdk.StackProps,
@@ -20,6 +21,12 @@ export interface MainAppStackProps
 export class MainAppStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: MainAppStackProps) {
     super(scope, id, props);
+
+    // Add stack-level validation for environment configuration
+    this.node.addValidation(new EnvironmentValidator({
+      apiVpcCidr: props.apiVpcCidr,
+      onpremiseCidr: props.onpremiseCidr,
+    }));
 
     // Create the API VPC with 2 AZs and explicit subnets
     const apiVpc = new ApiVpcConstruct(this, "ApiVpc", {

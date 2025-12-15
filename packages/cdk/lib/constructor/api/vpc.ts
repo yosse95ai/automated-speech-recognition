@@ -1,6 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
+import { validateVpcCidr, validateSubnetCidr } from '../../utils/cidr-validation';
 
 export interface VpcProps {
   cidr: string;
@@ -15,6 +16,26 @@ export class Vpc extends Construct {
 
   constructor(scope: Construct, id: string, props: VpcProps) {
     super(scope, id);
+
+    // Validate VPC CIDR block
+    const vpcCidrValidation = validateVpcCidr(props.cidr, `${props.name} VPC`);
+    if (!vpcCidrValidation.isValid) {
+      throw new Error(vpcCidrValidation.errorMessage);
+    }
+
+    // Validate subnet CIDR masks
+    const privateCidrMask = 24;
+    const publicCidrMask = 24;
+    
+    const privateSubnetValidation = validateSubnetCidr(privateCidrMask, `${props.name} プライベートサブネット`);
+    if (!privateSubnetValidation.isValid) {
+      throw new Error(privateSubnetValidation.errorMessage);
+    }
+    
+    const publicSubnetValidation = validateSubnetCidr(publicCidrMask, `${props.name} パブリックサブネット`);
+    if (!publicSubnetValidation.isValid) {
+      throw new Error(publicSubnetValidation.errorMessage);
+    }
 
     const natConfig = props.difySetup
       ? {
