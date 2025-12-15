@@ -1,13 +1,5 @@
 {
   "mcpServers": {
-    "awslabsaws-documentation-mcp-server": {
-      "command": "uvx",
-      "timeout": 60000,
-      "args": ["awslabs.aws-documentation-mcp-server"],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
-    },
     "aws-knowledge-mcp-server": {
       "url": "https://knowledge-mcp.global.api.aws",
       "type": "http",
