@@ -24,6 +24,7 @@ export class MainAppStack extends cdk.Stack {
     // Create the API VPC with 2 AZs and explicit subnets
     const apiVpc = new ApiVpcConstruct(this, "ApiVpc", {
       cidr: props.apiVpcCidr,
+      subnetMask: props.apiVpcSubnetCidr,
       name: "Api",
       difySetup: props.difySetup,
     });
